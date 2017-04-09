@@ -18,6 +18,9 @@ public class MoveAction extends AbstractInputAction
 	private float MOVE_AMOUNT = 0.1f;
 	private float ROTATE_AMOUNT = 0.2f;
 	private float SPEED = 0.01f;
+	private float HEIGHT = 0.0f;
+	private float GRAVITY = 0.5f;
+	private float Y_VELOCITY = 0.0f;
 
 	public MoveAction(SceneNode p, String d)
 	{
@@ -47,6 +50,7 @@ public class MoveAction extends AbstractInputAction
 
 		switch(moveDirection)
 		{
+			/*
 			case "FORWARD":
 				rotation = player.getLocalRotation();
 				direction = new Vector3D(0,0,1);
@@ -61,6 +65,7 @@ public class MoveAction extends AbstractInputAction
 				direction.scale(-(double)(SPEED * time));
 				player.translate((float)direction.getX(),(float)direction.getY(),(float)direction.getZ());
 				break;
+			*/
 			case "RIGHT":
 				rotation = player.getLocalRotation();
 				direction = new Vector3D(1,0,0);
@@ -75,13 +80,23 @@ public class MoveAction extends AbstractInputAction
 				direction.scale((double)(SPEED * time));
 				player.translate((float)direction.getX(),(float)direction.getY(),(float)direction.getZ());
 				break;
+			case "JUMP":
+				direction = new Vector3D(0,1,0);
+				//Y_VELOCITY += GRAVITY * time;
+				direction.scale((double)((2*SPEED) * time));
+				player.translate((float)direction.getX(),(float)direction.getY(),(float)direction.getZ());
+				/*
+				((Human)player).yVelocity = -12.0f;
+				System.out.println("TIME = " + time);
+				*/
+				break;
+			/*
 			case "YAW_RIGHT":
 				player.rotate(1, new Vector3D(0,1,0));
 				break;
 			case "YAW_LEFT":
 				player.rotate(-1, new Vector3D(0,1,0));
 				break;
-			/*
 			case "PITCH_UP":
 				viewDir = camera.getViewDirection();
 				upAxis = camera.getUpAxis();
@@ -124,7 +139,6 @@ public class MoveAction extends AbstractInputAction
 				camera.setRightAxis(rightAxis.normalize());
 				camera.setUpAxis(upAxis.normalize());
 				break;
-			*/
 			case "X_AXIS":
 				if(e.getValue() < -0.2)
 				{
@@ -171,7 +185,6 @@ public class MoveAction extends AbstractInputAction
 					player.rotate(-1, new Vector3D(0,1,0));
 				}
 				break;
-			/*
 			case "RY_AXIS":
 				if(e.getValue() < -0.2)
 				{

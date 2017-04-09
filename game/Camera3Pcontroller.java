@@ -28,7 +28,7 @@ public class Camera3Pcontroller
 		worldUpVec = new Vector3D(0,1,0);
 		cameraDistanceFromTarget = 5.0f;
 		cameraAzimuth = 180; // start from BEHIND and ABOVE the target
-		cameraElevation = 20.0f; // elevation is in degrees
+		cameraElevation = 10.0f; // elevation is in degrees
 		update(0.0f); // initialize camera state
 		if(inputMgr == null)
 		{
@@ -182,7 +182,7 @@ public class Camera3Pcontroller
 		public void performAction(float time, Event evt) {
 			float zoomAmount=0.1f; 
 			
-			if (cameraDistanceFromTarget < 40)
+			if (cameraDistanceFromTarget < 100)
 				cameraDistanceFromTarget += zoomAmount;	
 		}		
 	}

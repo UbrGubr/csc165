@@ -9,7 +9,7 @@ import java.nio.IntBuffer;
 
 public class Ground extends TriMesh
 {
-	private static float[] verts = new float[] { 	1,0,.5f,	1,1,.5f, 	-1,0,.5f, 	// front right
+	private static float[] verts = new float[] { 	 1,0,.5f,	1,1,.5f, 	-1,0,.5f, 	// front right
 													-1,0,.5f, 	1,1,.5f,	-1,1,.5f,	// front left
 													-1,1,.5f,	1,1,.5f,	1,1,-.5f,	// top right
 													-1,1,.5f,	1,1,-.5f,	-1,1,-.5f	// top left
