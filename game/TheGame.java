@@ -192,7 +192,7 @@ public class TheGame extends BaseGame
 
 	}
 
-	public void update(float elapsedTimeMS)
+	protected void update(float elapsedTimeMS)
 	{
 		Point3D camLoc = camera.getLocation();
 		//System.out.println("camera.X=" + camLoc.getX() + " camera.Y=" + camLoc.getY() + " camera.Z=" + camLoc.getZ());1
@@ -237,5 +237,10 @@ public class TheGame extends BaseGame
 		String name = "Terrain:" + heightMap.getClass().getSimpleName();
 		TerrainBlock tb = new TerrainBlock(name, terrainSize, terrainScale, heightMap.getHeightData(), terrainOrigin);
 		return tb;
+	}
+
+	public Human getPlayer()
+	{
+		return player1;
 	}
 }

@@ -8,8 +8,11 @@ import com.jogamp.common.nio.Buffers;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import graphicslib3D.Point3D;
+
 public class Human extends Cylinder
 {
+	Point3D position;
 	float yVelocity;
 	float yPosition;
 
@@ -25,5 +28,15 @@ public class Human extends Cylinder
 		super(solid);
 		yVelocity = 0;
 		yPosition = 0;
+	}
+
+	public void setLocation(Point3D pos)
+	{
+		this.position = pos;
+	}
+
+	public Point3D getLocation()
+	{
+		return position;
 	}
 }
