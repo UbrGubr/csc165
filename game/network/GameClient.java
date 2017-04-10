@@ -29,10 +29,12 @@ public class GameClient extends GameConnectionClient
 	{
 		String message = (String) msg; 
 		String[] msgTokens = message.split(",");
+		System.out.println("Processing client packets");
 
 		if(msgTokens[0].compareTo("join")==0)
 		{
 			// format join,success or join,failure
+			System.out.println("Join message received");
 			if(msgTokens[1].compareTo("success")==0)
 			{
 				game.setConnected(true);
@@ -93,6 +95,7 @@ public class GameClient extends GameConnectionClient
 		// format create,localid,x,y,z
 		try
 		{
+			System.out.println("create message sent to " + id.toString());
 			String message = new String("create," + id.toString());
 			message += "," + position.getX() + "," + position.getY() + "," + position.getZ();
 			sendPacket(message);

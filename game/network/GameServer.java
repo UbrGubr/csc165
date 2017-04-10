@@ -78,7 +78,8 @@ public class GameServer extends GameConnectionServer<UUID>
 		// format join,success or join,failure
 		try
 		{
-			String message = new String("join");
+			System.out.println("Server sending joined message");
+			String message = new String("join,");
 			if(success) 
 				message += "success";
 			else

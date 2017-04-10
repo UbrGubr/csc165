@@ -19,6 +19,7 @@ public class Human extends Cylinder
 	public Human()
 	{
 		super();
+		position = new Point3D(0,0,0);
 		yVelocity = 0;
 		yPosition = 0;
 	}
@@ -26,6 +27,7 @@ public class Human extends Cylinder
 	Human(boolean solid)
 	{
 		super(solid);
+		position = new Point3D(0,0,0);
 		yVelocity = 0;
 		yPosition = 0;
 	}
@@ -37,6 +39,7 @@ public class Human extends Cylinder
 
 	public Point3D getLocation()
 	{
+		System.out.println("Getting player location");
 		return position;
 	}
 }
