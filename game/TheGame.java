@@ -1,5 +1,8 @@
 package game;
 
+import game.characters.*;
+import game.camera.*;
+
 import sage.app.BaseGame;
 import sage.display.*;
 import sage.camera.*;
@@ -58,9 +61,10 @@ public class TheGame extends BaseGame
 	{
 
 		//rootNode = new Group("Root Node");
-		skybox = new SkyBox("SkyBox", 20.0f, 20.0f, 20.0f);
-		Texture background = TextureManager.loadTexture2D("background.png");
+		skybox = new SkyBox("SkyBox", 24.0f, 15.0f, 50.0f);
+		Texture background = TextureManager.loadTexture2D("./textures/skybox/nightsky_ft.jpg");
 		skybox.setTexture(SkyBox.Face.North, background);
+		//skybox.translate(0,-20,0);
 		//rootNode.addChild(skybox);
 		addGameWorldObject(skybox);
 
@@ -89,13 +93,13 @@ public class TheGame extends BaseGame
 	private void initTerrainHeightMap()
 	{
 		skybox = new SkyBox("SkyBox", 20.0f, 20.0f, 20.0f);
-		Texture background = TextureManager.loadTexture2D("background.png");
+		Texture background = TextureManager.loadTexture2D("./textures/background.png");
 		skybox.setTexture(SkyBox.Face.North, background);
 		//rootNode.addChild(skybox);
 		addGameWorldObject(skybox);
 
 		TerrainBlock[] terrain = new TerrainBlock[3];
-		ImageBasedHeightMap myHeightMap = new ImageBasedHeightMap("height.jpg");
+		ImageBasedHeightMap myHeightMap = new ImageBasedHeightMap("./textures/height.jpg");
 		for(int i=0; i<3; i++)
 		{
 			terrain[i] = createTerBlock(myHeightMap, i+1);
@@ -103,7 +107,7 @@ public class TheGame extends BaseGame
 
 		// create texture state to color terrain 
 		TextureState groundState;
-		Texture groundTexture = TextureManager.loadTexture2D("sand.bmp");
+		Texture groundTexture = TextureManager.loadTexture2D("./textures/sand.bmp");
 		groundTexture.setApplyMode(Texture.ApplyMode.Replace);
 		groundState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture); // TODO - condense this?
 		groundState.setTexture(groundTexture, 0);
@@ -124,7 +128,7 @@ public class TheGame extends BaseGame
 		camera.setLocation(new Point3D(0,0,0));
 
 		// Players will be cylinders
-		player1 = new Human(true);
+		player1 = new Human();
 		player1.setSlices(50);
 		player1.rotate(90, new Vector3D(1,0,0));
 		player1.scale(1,3,1);
@@ -208,7 +212,7 @@ public class TheGame extends BaseGame
 	{
 		Rectangle ground = new Rectangle();
 		ground.scale(40,40,1);
-		Texture groundTex = TextureManager.loadTexture2D("sand.bmp");
+		Texture groundTex = TextureManager.loadTexture2D("./textures/seamless_brick_dark.png");
 		TextureState groundTexState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
 		groundTexState.setTexture(groundTex);
 		groundTexState.setEnabled(true);

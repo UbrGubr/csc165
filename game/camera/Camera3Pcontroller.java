@@ -1,4 +1,4 @@
-package game;
+package game.camera;
 
 import net.java.games.input.Event;
 import graphicslib3D.Point3D;

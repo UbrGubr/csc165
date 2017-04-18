@@ -1,5 +1,6 @@
-package game;
+package a3;
 
+import game.*;
 import game.network.*;
 
 import java.io.IOException;

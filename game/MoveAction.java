@@ -1,5 +1,7 @@
 package game;
 
+import game.characters.*;
+
 import sage.input.action.*;
 import sage.camera.*;
 import sage.scene.SceneNode;
@@ -67,18 +69,20 @@ public class MoveAction extends AbstractInputAction
 				break;
 			*/
 			case "RIGHT":
-				rotation = player.getLocalRotation();
-				direction = new Vector3D(1,0,0);
-				direction = direction.mult(rotation);
-				direction.scale(-(double)(SPEED * time));
-				player.translate((float)direction.getX(),(float)direction.getY(),(float)direction.getZ());
+				((Human)player).moveRight(-(double)(SPEED*time));
+				//rotation = player.getLocalRotation();
+				//direction = new Vector3D(1,0,0);
+				//direction = direction.mult(rotation);
+				//direction.scale(-(double)(SPEED * time));
+				//player.translate((float)direction.getX(),(float)direction.getY(),(float)direction.getZ());
 				break;
 			case "LEFT":
-				rotation = player.getLocalRotation();
-				direction = new Vector3D(1,0,0);
-				direction = direction.mult(rotation);
-				direction.scale((double)(SPEED * time));
-				player.translate((float)direction.getX(),(float)direction.getY(),(float)direction.getZ());
+				((Human)player).moveLeft((double)(SPEED * time));
+				//rotation = player.getLocalRotation();
+				//direction = new Vector3D(1,0,0);
+				//direction = direction.mult(rotation);
+				//direction.scale((double)(SPEED * time));
+				//player.translate((float)direction.getX(),(float)direction.getY(),(float)direction.getZ());
 				break;
 			case "JUMP":
 				direction = new Vector3D(0,1,0);

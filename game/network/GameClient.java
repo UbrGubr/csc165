@@ -1,6 +1,7 @@
 package game.network;
 
 import game.*;
+import game.characters.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
