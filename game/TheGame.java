@@ -36,6 +36,8 @@ public class TheGame extends BaseGame
 	Matrix3D rotation;
 	Vector3D direction = new Vector3D(0,1,0);
 
+	int endOfWorld = 20;
+
 	private float HEIGHT = 0.0f;
 	private float SPEED = 0.01f;
 	private float GRAVITY = 0.5f;
@@ -45,6 +47,7 @@ public class TheGame extends BaseGame
 		im = getInputManager();
 		kbName = im.getKeyboardName();
 		initDisplay();
+		initSkyBox();
 		initTerrain();
 		//initTerrainHeightMap();
 		initGameObjects();
@@ -57,37 +60,43 @@ public class TheGame extends BaseGame
 		display.setTitle("The Game");
 	}
 
-	private void initTerrain()
+	private void initSkyBox()
 	{
-
-		//rootNode = new Group("Root Node");
 		skybox = new SkyBox("SkyBox", 24.0f, 15.0f, 50.0f);
 		Texture background = TextureManager.loadTexture2D("./textures/skybox/nightsky_ft.jpg");
 		skybox.setTexture(SkyBox.Face.North, background);
-		//skybox.translate(0,-20,0);
-		//rootNode.addChild(skybox);
 		addGameWorldObject(skybox);
+	}
 
-		Rectangle[] terrain = new Rectangle[5];
+	private void initTerrain()
+	{
 		for(int i=0; i<5; i++)
 		{
-			terrain[i] = createGroundPanel(i);
-			addGameWorldObject(terrain[i]);
-		}
+			/*
+			if(i == 2)
+			{
+				Rectangle hazard = createHazardPanel();
+				Matrix3D hazardMat = hazard.getLocalTranslation();
+				hazardMat.translate(endOfWorld,0,0);
+				hazard.setLocalTranslation(hazardMat);
+				addGameWorldObject(hazard);
+				endOfWorld -= 10;
+			}*/
+			Rectangle ground = createGroundPanel();
+			Matrix3D groundMat = ground.getLocalTranslation();
+			groundMat.translate(endOfWorld-20,0,0);
+			ground.setLocalTranslation(groundMat);
+			addGameWorldObject(ground);
+			endOfWorld -= 40;
 
-		/*
-		Rectangle underGround = new Rectangle();
-		Texture underGroundTex = TextureManager.loadTexture2D("stone.jpg");
-		TextureState underGroundTexState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
-		underGroundTexState.setTexture(underGroundTex);
-		underGroundTexState.setEnabled(true);
-		underGround.setRenderState(underGroundTexState);
-		Matrix3D underGroundMat = underGround.getLocalTranslation();
-		underGroundMat.translate(0,-8,-6);
-		underGround.setLocalTranslation(underGroundMat);
-		underGround.scale(100,10,1);
-		addGameWorldObject(underGround);
-		*/
+			Rectangle hazard = createHazardPanel();
+			Matrix3D hazardMat = hazard.getLocalTranslation();
+			hazardMat.translate(endOfWorld,0,0);
+			hazard.setLocalTranslation(hazardMat);
+			addGameWorldObject(hazard);
+			endOfWorld -= 5;
+		}
+		System.out.println("End of world = " + endOfWorld);
 	}
 
 	private void initTerrainHeightMap()
@@ -203,12 +212,12 @@ public class TheGame extends BaseGame
 		Matrix3D camTranslation = new Matrix3D();
 		camTranslation.translate(camLoc.getX(), camLoc.getY(), camLoc.getZ());
 		skybox.setLocalTranslation(camTranslation);
-
+		
 		camController.update(elapsedTimeMS);
 		super.update(elapsedTimeMS);
 	}
 
-	private Rectangle createGroundPanel(int panelNum)
+	private Rectangle createGroundPanel()
 	{
 		Rectangle ground = new Rectangle();
 		ground.scale(40,40,1);
@@ -217,12 +226,23 @@ public class TheGame extends BaseGame
 		groundTexState.setTexture(groundTex);
 		groundTexState.setEnabled(true);
 		ground.setRenderState(groundTexState);
-		Matrix3D groundMat = ground.getLocalTranslation();
-		groundMat.translate((-40*panelNum),0,0);
-		ground.setLocalTranslation(groundMat);
 		ground.rotate(90,new Vector3D(1,0,0));
 
 		return ground;
+	}
+
+	private Rectangle createHazardPanel()
+	{
+		Rectangle hazard = new Rectangle();
+		hazard.scale(10,40,1);
+		Texture hazardTex = TextureManager.loadTexture2D("./textures/grass.jpg");
+		TextureState hazardTexState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
+		hazardTexState.setTexture(hazardTex);
+		hazardTexState.setEnabled(true);
+		hazard.setRenderState(hazardTexState);
+		hazard.rotate(90,new Vector3D(1,0,0));
+
+		return hazard;
 	}
 
 	private TerrainBlock createTerBlock(AbstractHeightMap heightMap, int blockNum)

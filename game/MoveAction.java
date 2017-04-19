@@ -19,7 +19,7 @@ public class MoveAction extends AbstractInputAction
 	String moveDirection;
 	private float MOVE_AMOUNT = 0.1f;
 	private float ROTATE_AMOUNT = 0.2f;
-	private float SPEED = 0.01f;
+	//private float SPEED = 0.01f;
 	private float HEIGHT = 0.0f;
 	private float GRAVITY = 0.5f;
 	private float Y_VELOCITY = 0.0f;
@@ -69,7 +69,7 @@ public class MoveAction extends AbstractInputAction
 				break;
 			*/
 			case "RIGHT":
-				((Human)player).moveRight(-(double)(SPEED*time));
+				((Human)player).moveRight(time);
 				//rotation = player.getLocalRotation();
 				//direction = new Vector3D(1,0,0);
 				//direction = direction.mult(rotation);
@@ -77,7 +77,7 @@ public class MoveAction extends AbstractInputAction
 				//player.translate((float)direction.getX(),(float)direction.getY(),(float)direction.getZ());
 				break;
 			case "LEFT":
-				((Human)player).moveLeft((double)(SPEED * time));
+				((Human)player).moveLeft(time);
 				//rotation = player.getLocalRotation();
 				//direction = new Vector3D(1,0,0);
 				//direction = direction.mult(rotation);
@@ -85,10 +85,11 @@ public class MoveAction extends AbstractInputAction
 				//player.translate((float)direction.getX(),(float)direction.getY(),(float)direction.getZ());
 				break;
 			case "JUMP":
-				direction = new Vector3D(0,1,0);
+				((Human)player).jump(time);
+				//direction = new Vector3D(0,1,0);
 				//Y_VELOCITY += GRAVITY * time;
-				direction.scale((double)((2*SPEED) * time));
-				player.translate((float)direction.getX(),(float)direction.getY(),(float)direction.getZ());
+				//direction.scale((double)((2*SPEED) * time));
+				//player.translate((float)direction.getX(),(float)direction.getY(),(float)direction.getZ());
 				/*
 				((Human)player).yVelocity = -12.0f;
 				System.out.println("TIME = " + time);
