@@ -64,7 +64,7 @@ public class Avatar extends Cylinder
 		updateTranslation();
 		//System.out.println("xLoc = "+location.getX());
 	}
-
+/*
 	public void jump(float speed, float time)
 	{
 		Vector3D loc = new Vector3D(location);
@@ -74,7 +74,7 @@ public class Avatar extends Cylinder
 		location = new Point3D(loc);
 		updateTranslation();
 	}
-
+*/
 	public void updateTranslation()
 	{
 		Matrix3D mat = new Matrix3D();

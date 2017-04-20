@@ -9,11 +9,14 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import graphicslib3D.Point3D;
+import graphicslib3D.Vector3D;
+import graphicslib3D.Matrix3D;
 
 public class Human extends Avatar
 {
-	private float X_SPEED = 0.01f;
-	private float Y_SPEED = 0.01f;
+	private float X_VELOCITY = 0.01f;
+	private float Y_VELOCITY = 0;
+	private float GRAVITY = 0.5f;
 
 	public Human()
 	{
@@ -27,16 +30,34 @@ public class Human extends Avatar
 
 	public void moveRight(float time)
 	{
-		super.moveRight(X_SPEED, time);
+		super.moveRight(X_VELOCITY, time);
 	}
 
 	public void moveLeft(float time)
 	{
-		super.moveLeft(X_SPEED, time);
+		super.moveLeft(X_VELOCITY, time);
 	}
 
 	public void jump(float time)
 	{
-		super.jump(Y_SPEED, time);
+		Y_VELOCITY = 1.0f;
+	}
+
+	public void update(float time)
+	{
+		/*
+		Vector3D loc = new Vector3D(getLocation());
+		direction = new Vector3D(0,1,0);
+		direction.scale(Y_VELOCITY * time);
+		loc = loc.add(direction);
+		setLocation(new Point3D(loc));
+		updateTranslation();
+		if(getLocation().getY() > 2)
+				Y_VELOCITY -= GRAVITY * time;
+		else
+			Y_VELOCITY = 0;
+
+		System.out.println("Y_VELOCITY = " + Y_VELOCITY);
+		*/
 	}
 }

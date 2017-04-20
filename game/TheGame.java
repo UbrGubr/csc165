@@ -12,6 +12,7 @@ import sage.scene.shape.*;
 import sage.scene.state.*;
 import sage.terrain.*;
 import sage.texture.*;
+import sage.model.loader.OBJLoader;
 
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
@@ -159,6 +160,29 @@ public class TheGame extends BaseGame
 		addGameWorldObject(ground);
 		*/
 
+		OBJLoader loader = new OBJLoader();
+		TriMesh gateCenter = loader.loadModel("./models/gate_wood.obj");
+		Texture woodTex = TextureManager.loadTexture2D("./textures/light_wood.png");
+		TextureState woodTexState = (TextureState)display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
+		woodTexState.setTexture(woodTex);
+		woodTexState.setEnabled(true);
+		gateCenter.setRenderState(woodTexState);
+		gateCenter.rotate(90,new Vector3D(0,1,0));
+		gateCenter.scale(1,.75f,1);
+		gateCenter.translate(10,0,0);
+		addGameWorldObject(gateCenter);
+
+		TriMesh gateFrame = loader.loadModel("./models/gate_stone.obj");
+		Texture stoneTex = TextureManager.loadTexture2D("./textures/stone.jpg");
+		TextureState stoneTexState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
+		stoneTexState.setTexture(stoneTex);
+		stoneTexState.setEnabled(true);
+		gateFrame.setRenderState(stoneTexState);
+		gateFrame.rotate(90,new Vector3D(0,1,0));
+		gateFrame.scale(1,.75f,1);
+		gateFrame.translate(10,0,0);
+		addGameWorldObject(gateFrame);
+
 
 		Point3D origin = new Point3D(0,0,0);
 		Point3D xEnd = new Point3D(100,0,0);
@@ -212,7 +236,9 @@ public class TheGame extends BaseGame
 		Matrix3D camTranslation = new Matrix3D();
 		camTranslation.translate(camLoc.getX(), camLoc.getY(), camLoc.getZ());
 		skybox.setLocalTranslation(camTranslation);
-		
+
+		player1.update(elapsedTimeMS);
+
 		camController.update(elapsedTimeMS);
 		super.update(elapsedTimeMS);
 	}
