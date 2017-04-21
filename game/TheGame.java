@@ -83,6 +83,7 @@ public class TheGame extends BaseGame
 				addGameWorldObject(hazard);
 				endOfWorld -= 10;
 			}*/
+			
 			Rectangle ground = createGroundPanel();
 			Matrix3D groundMat = ground.getLocalTranslation();
 			groundMat.translate(endOfWorld-20,0,0);
@@ -160,6 +161,7 @@ public class TheGame extends BaseGame
 		addGameWorldObject(ground);
 		*/
 
+		// Gate center
 		OBJLoader loader = new OBJLoader();
 		TriMesh gateCenter = loader.loadModel("./models/gate_wood.obj");
 		Texture woodTex = TextureManager.loadTexture2D("./textures/light_wood.png");
@@ -172,6 +174,7 @@ public class TheGame extends BaseGame
 		gateCenter.translate(10,0,0);
 		addGameWorldObject(gateCenter);
 
+		// Gate pillars
 		TriMesh gateFrame = loader.loadModel("./models/gate_stone.obj");
 		Texture stoneTex = TextureManager.loadTexture2D("./textures/stone.jpg");
 		TextureState stoneTexState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
@@ -182,6 +185,13 @@ public class TheGame extends BaseGame
 		gateFrame.scale(1,.75f,1);
 		gateFrame.translate(10,0,0);
 		addGameWorldObject(gateFrame);
+
+		// Background wall
+		TriMesh wall = loader.loadModel("./models/wall_stone.obj");
+		wall.setRenderState(stoneTexState);
+		wall.rotate(90,new Vector3D(0,1,0));
+		wall.translate(-5,0,40);
+		addGameWorldObject(wall);
 
 
 		Point3D origin = new Point3D(0,0,0);
@@ -246,7 +256,7 @@ public class TheGame extends BaseGame
 	private Rectangle createGroundPanel()
 	{
 		Rectangle ground = new Rectangle();
-		ground.scale(40,40,1);
+		ground.scale(40,80,1);
 		Texture groundTex = TextureManager.loadTexture2D("./textures/seamless_brick_dark.png");
 		TextureState groundTexState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
 		groundTexState.setTexture(groundTex);
@@ -260,8 +270,8 @@ public class TheGame extends BaseGame
 	private Rectangle createHazardPanel()
 	{
 		Rectangle hazard = new Rectangle();
-		hazard.scale(10,40,1);
-		Texture hazardTex = TextureManager.loadTexture2D("./textures/grass.jpg");
+		hazard.scale(10,80,1);
+		Texture hazardTex = TextureManager.loadTexture2D("./textures/lava.png");
 		TextureState hazardTexState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
 		hazardTexState.setTexture(hazardTex);
 		hazardTexState.setEnabled(true);
