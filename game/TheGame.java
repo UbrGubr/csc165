@@ -173,6 +173,31 @@ public class TheGame extends BaseGame
 		gateCenter.scale(1,.75f,1);
 		gateCenter.translate(10,0,0);
 		addGameWorldObject(gateCenter);
+		
+		
+				TriMesh golem = loader.loadModel("./models/golem.obj");
+		Texture golemTex = TextureManager.loadTexture2D("./textures/golem.png");
+		TextureState golemTexState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
+		golemTexState.setTexture(golemTex);
+		golemTexState.setEnabled(true);
+		golem.setRenderState(golemTexState);
+		golem.rotate(75,new Vector3D(0,1,0));
+		golem.scale(1,.75f,1);
+		golem.translate(-10,2.5f,6);
+		addGameWorldObject(golem);
+		
+		
+		TriMesh man = loader.loadModel("./models/man.obj");
+		Texture manTex = TextureManager.loadTexture2D("./textures/man.png");
+		TextureState manTexState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
+		manTexState.setTexture(manTex);
+		manTexState.setEnabled(true);
+		man.setRenderState(manTexState);
+		man.rotate(0,new Vector3D(0,1,0));
+		man.scale(4,4,4);
+		man.translate(-2,6,6);
+		addGameWorldObject(man);
+		
 
 		// Gate pillars
 		TriMesh gateFrame = loader.loadModel("./models/gate_stone.obj");
