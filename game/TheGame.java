@@ -32,7 +32,7 @@ public class TheGame extends BaseGame
 	String kbName;
 	Group rootNode;
 	SkyBox skybox;
-	Human player1;
+	Avatar player1;
 
 	Matrix3D rotation;
 	Vector3D direction = new Vector3D(0,1,0);
@@ -52,6 +52,7 @@ public class TheGame extends BaseGame
 		initTerrain();
 		//initTerrainHeightMap();
 		initGameObjects();
+		initPlayers();
 		initMovementControls();
 	}
 
@@ -134,22 +135,17 @@ public class TheGame extends BaseGame
 
 	private void initGameObjects()
 	{
-		camera = display.getRenderer().getCamera();
-		camera.setPerspectiveFrustum(45, 1, 0.01, 1000);
-		camera.setLocation(new Point3D(0,0,0));
+		
 
 		// Players will be cylinders
-		player1 = new Human();
-		player1.setSlices(50);
-		player1.rotate(90, new Vector3D(1,0,0));
-		player1.scale(1,3,1);
-		Matrix3D player1Mat = player1.getLocalTranslation();
-		player1Mat.translate(0,2,0);
-		player1.setLocalTranslation(player1Mat);
-		addGameWorldObject(player1);
+		//player1 = new Human();
+		//player1.rotate(90, new Vector3D(1,0,0));
+		//player1.scale(1,3,1);
+		//Matrix3D player1Mat = player1.getLocalTranslation();
+		//player1Mat.translate(0,2,0);
+		//player1.setLocalTranslation(player1Mat);
+		//addGameWorldObject(player1);
 
-		// Create camera controller
-		camController = new Camera3Pcontroller(camera, player1, im, kbName);
 
 		// Ground will be a rectangle
 		/*
@@ -163,6 +159,23 @@ public class TheGame extends BaseGame
 
 		// Gate center
 		OBJLoader loader = new OBJLoader();
+
+		Avatar man = new Human(); 
+		applyTexture(man, "./textures/man.png");
+		man.rotate(0,new Vector3D(0,1,0));
+		man.scale(4,4,4);
+		man.translate(-2,6,6);
+		addGameWorldObject(man);
+		
+		Avatar golem = new Monster(); 
+		applyTexture(golem, "./textures/golem.png");
+		golem.rotate(75,new Vector3D(0,1,0));
+		golem.scale(1,.75f,1);
+		golem.translate(-10,2.5f,6);
+		addGameWorldObject(golem);
+		
+
+		// Gate center
 		TriMesh gateCenter = loader.loadModel("./models/gate_wood.obj");
 		Texture woodTex = TextureManager.loadTexture2D("./textures/light_wood.png");
 		TextureState woodTexState = (TextureState)display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
@@ -173,31 +186,7 @@ public class TheGame extends BaseGame
 		gateCenter.scale(1,.75f,1);
 		gateCenter.translate(10,0,0);
 		addGameWorldObject(gateCenter);
-		
-		
-				TriMesh golem = loader.loadModel("./models/golem.obj");
-		Texture golemTex = TextureManager.loadTexture2D("./textures/golem.png");
-		TextureState golemTexState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
-		golemTexState.setTexture(golemTex);
-		golemTexState.setEnabled(true);
-		golem.setRenderState(golemTexState);
-		golem.rotate(75,new Vector3D(0,1,0));
-		golem.scale(1,.75f,1);
-		golem.translate(-10,2.5f,6);
-		addGameWorldObject(golem);
-		
-		
-		TriMesh man = loader.loadModel("./models/man.obj");
-		Texture manTex = TextureManager.loadTexture2D("./textures/man.png");
-		TextureState manTexState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
-		manTexState.setTexture(manTex);
-		manTexState.setEnabled(true);
-		man.setRenderState(manTexState);
-		man.rotate(0,new Vector3D(0,1,0));
-		man.scale(4,4,4);
-		man.translate(-2,6,6);
-		addGameWorldObject(man);
-		
+
 
 		// Gate pillars
 		TriMesh gateFrame = loader.loadModel("./models/gate_stone.obj");
@@ -231,6 +220,28 @@ public class TheGame extends BaseGame
 		addGameWorldObject(xAxis);
 		addGameWorldObject(yAxis);
 		addGameWorldObject(zAxis);
+	}
+
+	private void initPlayers()
+	{
+		OBJLoader loader = new OBJLoader();
+
+		player1 = new Human();
+		applyTexture(player1, "./textures/man.png");
+		player1.rotate(90, new Vector3D(0,1,0));
+		player1.scale(2,2,2);
+		Matrix3D player1Mat = player1.getLocalTranslation();
+		player1Mat.translate(0,2,0);
+		player1.setLocalTranslation(player1Mat);
+		addGameWorldObject(player1);
+
+
+		// Create camera controller
+		camera = display.getRenderer().getCamera();
+		camera.setPerspectiveFrustum(45, 1, 0.01, 1000);
+		camera.setLocation(new Point3D(0,0,0));
+
+		camController = new Camera3Pcontroller(camera, player1, im, kbName);
 	}
 
 	private void initMovementControls()
@@ -272,7 +283,7 @@ public class TheGame extends BaseGame
 		camTranslation.translate(camLoc.getX(), camLoc.getY(), camLoc.getZ());
 		skybox.setLocalTranslation(camTranslation);
 
-		player1.update(elapsedTimeMS);
+		//player1.update(elapsedTimeMS);
 
 		camController.update(elapsedTimeMS);
 		super.update(elapsedTimeMS);
@@ -306,6 +317,16 @@ public class TheGame extends BaseGame
 		return hazard;
 	}
 
+	private void applyTexture(Avatar c, String file)
+	{
+		Texture texture = TextureManager.loadTexture2D(file);
+		TextureState textureState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
+		textureState.setTexture(texture);
+		textureState.setEnabled(true);
+		c.setRenderState(textureState);
+		c.updateRenderStates();
+	}
+
 	private TerrainBlock createTerBlock(AbstractHeightMap heightMap, int blockNum)
 	{
 		float heightScale = 0.005f;
@@ -324,7 +345,7 @@ public class TheGame extends BaseGame
 		return tb;
 	}
 
-	public Human getPlayer()
+	public Avatar getPlayer()
 	{
 		return player1;
 	}

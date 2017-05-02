@@ -1,5 +1,6 @@
 package game.characters;
 
+import sage.scene.*;
 import sage.scene.shape.*;
 
 import graphicslib3D.Point3D;
@@ -7,7 +8,7 @@ import graphicslib3D.Vector3D;
 import graphicslib3D.Matrix3D;
 
 
-public class Avatar extends Cylinder
+public class Avatar extends Model3DTriMesh
 {
 	//private float SPEED = 0.01f;
 
@@ -17,13 +18,13 @@ public class Avatar extends Cylinder
 
 	public Avatar()
 	{
-		super(true);
+		super();
 		this.location = new Point3D(0,2,0);
 	}
 
 	public Avatar(Point3D loc)
 	{
-		super(true);
+		super();
 		this.location = loc;
 	}
 
@@ -80,5 +81,41 @@ public class Avatar extends Cylinder
 		Matrix3D mat = new Matrix3D();
 		mat.translate(location.getX(), location.getY(), location.getZ());
 		setLocalTranslation(mat);
+	}
+
+	public void addModel(Model3DTriMesh model)
+	{
+		setAnimatedNormals(model.getAnimatedNormals()); 
+		setAnimatedVertices(model.getAnimatedVertices()); 
+		setAnimations(model.getAnimations()); 
+		setJoints(model.getJoints()); 
+	    setShaderProgram(model.getShaderProgram()); 
+		setTextureFilename(model.getTextureFileName()); 
+		setVertexBoneIDs(model.getVertexBoneIDs()); 
+		setVertexBoneWeights(model.getVertexBoneWeights());
+		
+		
+		setColorBuffer(model.getColorBuffer());  
+		setFaceMaterialIndices(model.getFaceMaterialIndices()); 
+		setFaceMaterials(model.getFaceMaterials()); 
+		setIndexBuffer(model.getIndexBuffer()); 
+		setNormalBuffer(model.getNormalBuffer()); 
+		setTextureBuffer(model.getTextureBuffer()); 
+		setVertexBuffer(model.getVertexBuffer()); 
+		
+		updateLocalBound();
+	}
+	
+	public void addModel(TriMesh m)
+	{
+		setColorBuffer(m.getColorBuffer());  
+		setFaceMaterialIndices(m.getFaceMaterialIndices()); 
+		setFaceMaterials(m.getFaceMaterials()); 
+		setIndexBuffer(m.getIndexBuffer()); 
+		setNormalBuffer(m.getNormalBuffer()); 
+		setTextureBuffer(m.getTextureBuffer()); 
+		setVertexBuffer(m.getVertexBuffer()); 
+		
+		updateLocalBound();
 	}
 }

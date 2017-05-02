@@ -13,22 +13,22 @@ import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 import graphicslib3D.Matrix3D;
 
-public class Human extends Avatar
+public class Monster extends Avatar
 {
 	private float X_VELOCITY = 0.01f;
 	private float Y_VELOCITY = 0;
 	private float GRAVITY = 0.5f;
 
-	public Human()
+	public Monster()
 	{
 		super();
 
 		OBJLoader loader = new OBJLoader();
-		TriMesh human = loader.loadModel("./models/man.obj");
-		addModel(human);
+		TriMesh monster = loader.loadModel("./models/golem.obj");
+		addModel(monster);
 	}
 
-	public Human(Point3D loc)
+	public Monster(Point3D loc)
 	{
 		super(loc);
 	}
@@ -64,5 +64,5 @@ public class Human extends Avatar
 
 		System.out.println("Y_VELOCITY = " + Y_VELOCITY);
 		*/
-	}
-}
+
+}	}
