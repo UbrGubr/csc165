@@ -1,11 +1,13 @@
 package game.characters;
 
-import sage.scene.TriMesh;
+import sage.scene.*;
 import sage.scene.shape.*;
 import sage.model.loader.OBJLoader;
+import sage.model.loader.ogreXML.OgreXMLParser;
 
 import com.jogamp.common.nio.Buffers;
 
+import java.io.File;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -19,13 +21,17 @@ public class Human extends Avatar
 	private float Y_VELOCITY = 0;
 	private float GRAVITY = 0.5f;
 
+	private Model3DTriMesh human;
+
 	public Human()
 	{
-		super();
+		super(); 
 
 		OBJLoader loader = new OBJLoader();
 		TriMesh human = loader.loadModel("./models/man.obj");
+
 		addModel(human);
+
 	}
 
 	public Human(Point3D loc)
@@ -36,6 +42,7 @@ public class Human extends Avatar
 	public void moveRight(float time)
 	{
 		super.moveRight(X_VELOCITY, time);
+		System.out.println("Player moving right, speed = " + time);
 	}
 
 	public void moveLeft(float time)
@@ -64,5 +71,6 @@ public class Human extends Avatar
 
 		System.out.println("Y_VELOCITY = " + Y_VELOCITY);
 		*/
+
 	}
 }

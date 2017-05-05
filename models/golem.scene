@@ -1,0 +1,33 @@
+<scene export_time="1493962841.2953548" previous_export_time="1493958962.0368464" exported_by="PJ" formatVersion="1.0.1" >
+  <nodes >
+    <node name="Armature" >
+      <position x="0.000000" y="0.000000" z="-0.000000" />
+      <rotation qz="-0.000000" qx="0.000000" qy="0.000000" qw="1.000000" />
+      <scale x="1.000000" y="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <node name="golem" >
+        <position x="0.000000" y="2.879805" z="-1.055779" />
+        <rotation qz="-0.000000" qx="0.707107" qy="0.000000" qw="0.707107" />
+        <scale x="1.000000" y="1.000000" z="1.000000" />
+        <game >
+          <sensors />
+          <actuators />
+        </game>
+        <entity lock_trans_y="False" damping_trans="0.03999999910593033" lock_rot_x="False" actor="False" lock_rot_z="False" mass="1.0" velocity_min="0.0" friction_y="1.0" lock_rot_y="False" physics_type="STATIC" velocity_max="0.0" meshFile="golem.mesh" mass_radius="1.0" friction_z="1.0" anisotropic_friction="False" inertia_tensor="0.4000000059604645" name="golem" lock_trans_z="False" damping_rot="0.10000000149011612" lock_trans_x="False" ghost="False" friction_x="1.0" />
+      </node>
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="C:\Users\PJ\Documents\CSC165\blender_projects\exports\golem_mat.material" />
+    </item>
+  </externals>
+  <environment >
+    <colourBackground r="0.05087608844041824" b="0.05087608844041824" g="0.05087608844041824" />
+    <colourDiffuse r="0.05087608844041824" b="0.05087608844041824" g="0.05087608844041824" />
+    <colourAmbient r="0.0" b="0.0" g="0.0" />
+  </environment>
+</scene>

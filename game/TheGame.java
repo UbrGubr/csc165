@@ -2,6 +2,7 @@ package game;
 
 import game.characters.*;
 import game.camera.*;
+import game.ai.GolemController;
 
 import sage.app.BaseGame;
 import sage.display.*;
@@ -13,11 +14,15 @@ import sage.scene.state.*;
 import sage.terrain.*;
 import sage.texture.*;
 import sage.model.loader.OBJLoader;
+import sage.model.loader.ogreXML.OgreXMLParser;
 
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 import graphicslib3D.Matrix3D;
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.Random;
 import java.awt.Color;
 
 import net.java.games.input.Component.*;
@@ -30,9 +35,12 @@ public class TheGame extends BaseGame
 	Camera3Pcontroller camController;
 	IInputManager im;
 	String kbName;
-	Group rootNode;
+	Group rootNode, manModel, golemModel;
 	SkyBox skybox;
 	Avatar player1;
+	Monster golem;
+
+	GolemController golemController;
 
 	Matrix3D rotation;
 	Vector3D direction = new Vector3D(0,1,0);
@@ -42,6 +50,7 @@ public class TheGame extends BaseGame
 	private float HEIGHT = 0.0f;
 	private float SPEED = 0.01f;
 	private float GRAVITY = 0.5f;
+	private int NUM_ENEMIES = 5;
 	
 	protected void initGame()
 	{
@@ -135,31 +144,46 @@ public class TheGame extends BaseGame
 
 	private void initGameObjects()
 	{
-		
-
-		// Players will be cylinders
-		//player1 = new Human();
-		//player1.rotate(90, new Vector3D(1,0,0));
-		//player1.scale(1,3,1);
-		//Matrix3D player1Mat = player1.getLocalTranslation();
-		//player1Mat.translate(0,2,0);
-		//player1.setLocalTranslation(player1Mat);
-		//addGameWorldObject(player1);
 
 
-		// Ground will be a rectangle
+		golem = new Monster(new Point3D(-20,2,0), new Vector3D(1,0,0), 90);
+		//Random rand = new Random();
+		// Get a random spawn location
+		//int spawn_loc = rand.nextInt(Math.abs(endOfWorld)) + 20;
+		//System.out.println("Spawn location = " + -spawn_loc);
+		//golem.translate(-20,2,0);
+		//golem.rotate(90, new Vector3D(1,0,0));
+		applyTexture(golem, "golem.png");
+		addGameWorldObject(golem);
+
+		golemController = new GolemController(this, golem);
+
+
 		/*
-		Ground ground = new Ground();
-		Matrix3D groundMat = ground.getLocalTranslation();
-		groundMat.translate(0,-10,-8);
-		ground.setLocalTranslation(groundMat);
-		ground.scale(100,10,1);
-		addGameWorldObject(ground);
+		// Spawn enemies
+		golems = new Monster[NUM_ENEMIES];
+		Random rand = new Random();
+		for(int i=0; i<NUM_ENEMIES; i++)
+		{
+			golems[i] = new Monster();
+			// Get a random spawn location
+			int spawn_loc = rand.nextInt(Math.abs(endOfWorld)) + 20;
+			System.out.println("Spawn location = " + -spawn_loc);
+			golems[i].translate(-spawn_loc,2,0);
+			golems[i].rotate(90, new Vector3D(1,0,0));
+			applyTexture(golems[i], "golem.png");
+			golems[i].setMoving(false);
+			addGameWorldObject(golems[i]);
+
+			//golems[i].startAnimation("Walk");
+		}
 		*/
 
-		// Gate center
+
+
 		OBJLoader loader = new OBJLoader();
 
+	/*
 		Avatar man = new Human(); 
 		applyTexture(man, "./textures/man.png");
 		man.rotate(0,new Vector3D(0,1,0));
@@ -173,7 +197,7 @@ public class TheGame extends BaseGame
 		golem.scale(1,.75f,1);
 		golem.translate(-10,2.5f,6);
 		addGameWorldObject(golem);
-		
+	*/		
 
 		// Gate center
 		TriMesh gateCenter = loader.loadModel("./models/gate_wood.obj");
@@ -235,6 +259,30 @@ public class TheGame extends BaseGame
 		player1.setLocalTranslation(player1Mat);
 		addGameWorldObject(player1);
 
+/*
+		golemModel = getMonsterAvatar();
+		golemModel.translate(0,4,0);
+
+		Iterator<SceneNode> itr = golemModel.getChildren();
+		while(itr.hasNext())
+		{
+			Model3DTriMesh mesh = ((Model3DTriMesh)itr.next());
+			mesh.startAnimation("Walk");
+		}
+*/
+/*
+		Group model = ((Human)player1).getModel();
+
+		Iterator<SceneNode> itr = model.getChildren();
+		while (itr.hasNext())
+		{ 
+			Model3DTriMesh mesh = ((Model3DTriMesh)itr.next());
+			//mesh.startAnimation("Legs_walk");
+		}
+*/
+		//player1.startAnimation("Legs_walk");
+		//player1.startAnimation("Arms_walk");
+
 
 		// Create camera controller
 		camera = display.getRenderer().getCamera();
@@ -278,14 +326,34 @@ public class TheGame extends BaseGame
 	protected void update(float elapsedTimeMS)
 	{
 		Point3D camLoc = camera.getLocation();
-		//System.out.println("camera.X=" + camLoc.getX() + " camera.Y=" + camLoc.getY() + " camera.Z=" + camLoc.getZ());1
 		Matrix3D camTranslation = new Matrix3D();
 		camTranslation.translate(camLoc.getX(), camLoc.getY(), camLoc.getZ());
 		skybox.setLocalTranslation(camTranslation);
-
-		//player1.update(elapsedTimeMS);
-
 		camController.update(elapsedTimeMS);
+
+		golemController.update(elapsedTimeMS);
+		golem.updateAnimation(elapsedTimeMS);
+		golem.update(elapsedTimeMS);
+
+/*
+		for(int i=0; i<NUM_ENEMIES; i++)
+		{
+			golems[i].updateAnimation(elapsedTimeMS);
+			golems[i].update(elapsedTimeMS);
+		}
+*/
+
+/*
+		Iterator<SceneNode> itr = golemModel.getChildren();
+		while(itr.hasNext())
+		{
+			Model3DTriMesh submesh = (Model3DTriMesh) itr.next();
+			submesh.updateAnimation(elapsedTimeMS);
+		}
+
+		golemModel.updateGeometricState(elapsedTimeMS, true);
+*/
+
 		super.update(elapsedTimeMS);
 	}
 
@@ -325,6 +393,59 @@ public class TheGame extends BaseGame
 		textureState.setEnabled(true);
 		c.setRenderState(textureState);
 		c.updateRenderStates();
+	}
+
+	private Group getPlayerAvatar()
+	{
+		Group model = null;
+		OgreXMLParser loader = new OgreXMLParser();
+
+		try
+		{
+			String slash = File.separator;
+			model = loader.loadModel("models" + slash + "Cube.001.mesh.xml",
+			"models" + slash + "man_skin.material",
+			"models" + slash + "Cube.001.skeleton.xml");
+			model.updateGeometricState(0, true);
+		}
+		catch (Exception e)
+		{ 
+			e.printStackTrace();
+			System.exit(1);
+		}
+		
+		return model;
+	}
+
+	private Group getMonsterAvatar()
+	{
+		Group model = null;
+		OgreXMLParser loader = new OgreXMLParser();
+		loader.setVerbose(true);
+
+		try
+		{
+			String slash = File.separator;
+			model = loader.loadModel("models" + slash + "golem.mesh.xml",
+			"materials" + slash + "golem_mat.material",
+			"models" + slash + "golem.skeleton.xml");
+			model.updateGeometricState(0, true);
+		}
+		catch (Exception e)
+		{ 
+			e.printStackTrace();
+			System.exit(1);
+		}
+		
+		return model;
+	}
+
+	public boolean checkNearbyMonsters(Monster golem)
+	{
+		if(Math.abs(player1.getLocation().getX() - golem.getLocation().getX()) <= 10)
+			return true;
+		else
+			return false;
 	}
 
 	private TerrainBlock createTerBlock(AbstractHeightMap heightMap, int blockNum)

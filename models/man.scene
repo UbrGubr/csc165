@@ -1,0 +1,61 @@
+<scene previous_export_time="1493873189.341846" formatVersion="1.0.1" export_time="1493874302.8509078" exported_by="PJ" >
+  <nodes >
+    <node name="Armature" >
+      <position y="0.001601" x="0.000269" z="-0.136557" />
+      <rotation qz="-0.000000" qw="1.000000" qy="0.000000" qx="0.000000" />
+      <scale y="1.000000" x="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <node name="man" >
+        <position y="0.001601" x="0.000269" z="-0.136557" />
+        <rotation qz="-0.000000" qw="0.707107" qy="0.000000" qx="0.707107" />
+        <scale y="1.000000" x="1.000000" z="1.000000" />
+        <game >
+          <sensors />
+          <actuators />
+        </game>
+        <entity friction_x="1.0" lock_rot_z="False" mass="1.0" friction_z="1.0" inertia_tensor="0.4000000059604645" anisotropic_friction="False" actor="False" damping_rot="0.10000000149011612" lock_trans_z="False" lock_rot_y="False" lock_rot_x="False" friction_y="1.0" velocity_min="0.0" meshFile="Cube.001.mesh" physics_type="STATIC" lock_trans_y="False" velocity_max="0.0" damping_trans="0.03999999910593033" mass_radius="1.0" ghost="False" lock_trans_x="False" name="Cube.001" />
+      </node>
+    </node>
+    <node name="Lamp" >
+      <position y="5.903862" x="4.076245" z="-1.005454" />
+      <rotation qz="-0.272171" qw="0.570947" qy="0.755880" qx="0.169076" />
+      <scale y="1.000000" x="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light powerScale="1.0" name="Lamp" type="point" shadow="true" >
+        <position y="5.903862" x="4.076245" z="-1.005454" />
+        <lightAttenuation range="5000" linear="0.03333335240683057" constant="1.0" quadratic="0.0" />
+        <colourDiffuse b="1.0" r="1.0" g="1.0" />
+        <colourSpecular b="1.0" r="1.0" g="1.0" />
+        <colourShadow b="1.0" r="1.0" g="1.0" />
+      </light>
+    </node>
+    <node name="Camera" >
+      <position y="5.343665" x="7.481132" z="6.507640" />
+      <rotation qz="-0.208704" qw="0.780483" qy="0.336872" qx="0.483536" />
+      <scale y="1.000000" x="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <camera projectionType="perspective" name="Camera" fov="0.5033799435163735" >
+        <clipping farPlaneDist="100.0" far="100.0" near="0.10000000149011612" nearPlaneDist="0.10000000149011612" />
+      </camera>
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="C:\Users\PJ\Documents\CSC165\blender_projects\exports\man_skin.material" />
+    </item>
+  </externals>
+  <environment >
+    <colourBackground b="0.05087608844041824" r="0.05087608844041824" g="0.05087608844041824" />
+    <colourDiffuse b="0.05087608844041824" r="0.05087608844041824" g="0.05087608844041824" />
+    <colourAmbient b="0.0" r="0.0" g="0.0" />
+  </environment>
+</scene>

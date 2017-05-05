@@ -20,12 +20,22 @@ public class Avatar extends Model3DTriMesh
 	{
 		super();
 		this.location = new Point3D(0,2,0);
+		translate(0,2,0);
 	}
 
 	public Avatar(Point3D loc)
 	{
 		super();
 		this.location = loc;
+		translate((float)loc.getX(), (float)loc.getY(), (float)loc.getZ());
+	}
+
+	public Avatar(Point3D loc, float rot, Vector3D axis)
+	{
+		super();
+		this.location = loc;
+		rotate(rot, axis);
+		translate((float)loc.getX(), (float)loc.getY(), (float)loc.getZ());
 	}
 
 	public void setLocation(Point3D loc)
