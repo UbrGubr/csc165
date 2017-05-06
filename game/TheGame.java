@@ -20,6 +20,9 @@ import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 import graphicslib3D.Matrix3D;
 
+import sage.audio.*;
+import com.jogamp.openal.ALFactory;
+
 import java.io.File;
 import java.util.Iterator;
 import java.util.Random;
@@ -41,6 +44,9 @@ public class TheGame extends BaseGame
 	Monster golem;
 
 	GolemController golemController;
+	
+	IAudioManager audioMgr;
+	Sound testSound, testSound2;
 
 	Matrix3D rotation;
 	Vector3D direction = new Vector3D(0,1,0);
@@ -63,6 +69,7 @@ public class TheGame extends BaseGame
 		initGameObjects();
 		initPlayers();
 		initMovementControls();
+		initAudio();
 	}
 
 	private void initDisplay()
@@ -334,6 +341,10 @@ public class TheGame extends BaseGame
 		golemController.update(elapsedTimeMS);
 		golem.updateAnimation(elapsedTimeMS);
 		golem.update(elapsedTimeMS);
+		
+		
+		testSound.setLocation(new Point3D(golem.getWorldTranslation().getCol(3)));
+		setEarParameters();
 
 /*
 		for(int i=0; i<NUM_ENEMIES; i++)
@@ -465,6 +476,56 @@ public class TheGame extends BaseGame
 		TerrainBlock tb = new TerrainBlock(name, terrainSize, terrainScale, heightMap.getHeightData(), terrainOrigin);
 		return tb;
 	}
+	
+	public void initAudio(){
+		
+		AudioResource resource1, resource2;
+		
+		audioMgr = AudioManagerFactory.createAudioManager("sage.audio.joal.JOALAudioManager");
+		
+		if(!audioMgr.initialize())
+		{ System.out.println("Audio Manager failed to initialize!");
+			return;
+		}
+		
+		resource1 = audioMgr.createAudioResource("roar.wav", AudioResourceType.AUDIO_SAMPLE);
+		resource2 = audioMgr.createAudioResource("order.wav", AudioResourceType.AUDIO_SAMPLE);
+		
+		testSound =  new Sound(resource1, SoundType.SOUND_EFFECT, 3, true);
+		testSound.initialize(audioMgr);
+		testSound.setMaxDistance(50.0f);
+		testSound.setMinDistance(3.0f);
+		testSound.setRollOff(5.0f);
+		testSound.setLocation(new Point3D(golem.getWorldTranslation().getCol(3)));
+		
+		testSound2 =  new Sound(resource2, SoundType.SOUND_MUSIC, 1, true);
+		testSound2.initialize(audioMgr);
+		testSound2.setMaxDistance(50.0f);
+		testSound2.setMinDistance(3.0f);
+		testSound2.setRollOff(5.0f);
+		
+		
+		setEarParameters();
+		
+		
+		testSound.play();
+		testSound2.play();
+		
+	}
+	
+	public void setEarParameters(){
+		
+		Matrix3D avDir = (Matrix3D) (player1.getWorldRotation().clone());
+		//float camAz = camController.getAzimuth();
+		avDir.rotateY(180.0f);
+		Vector3D camDir = new Vector3D(0,0,1);
+		camDir = camDir.mult(avDir);
+		
+		audioMgr.getEar().setLocation(camera.getLocation());
+		audioMgr.getEar().setOrientation(camDir, new Vector3D(0,1,0));
+		
+	}
+	
 
 	public Avatar getPlayer()
 	{
