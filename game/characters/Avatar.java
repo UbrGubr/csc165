@@ -1,5 +1,7 @@
 package game.characters;
 
+import game.*;
+
 import sage.scene.*;
 import sage.scene.shape.*;
 
@@ -7,10 +9,9 @@ import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 import graphicslib3D.Matrix3D;
 
-
 public class Avatar extends Model3DTriMesh
 {
-	//private float SPEED = 0.01f;
+	private Direction facing;
 
 	Point3D location;
 	Vector3D direction;
@@ -20,6 +21,7 @@ public class Avatar extends Model3DTriMesh
 	{
 		super();
 		this.location = new Point3D(0,2,0);
+		facing = Direction.RIGHT;
 		translate(0,2,0);
 	}
 
@@ -27,6 +29,7 @@ public class Avatar extends Model3DTriMesh
 	{
 		super();
 		this.location = loc;
+		facing = Direction.RIGHT;
 		translate((float)loc.getX(), (float)loc.getY(), (float)loc.getZ());
 	}
 
@@ -34,6 +37,7 @@ public class Avatar extends Model3DTriMesh
 	{
 		super();
 		this.location = loc;
+		facing = Direction.RIGHT;
 		rotate(rot, axis);
 		translate((float)loc.getX(), (float)loc.getY(), (float)loc.getZ());
 	}
@@ -58,6 +62,7 @@ public class Avatar extends Model3DTriMesh
 		loc = loc.add(direction);
 		location = new Point3D(loc);
 		//this.translate((float)direction.getX(),(float)direction.getY(),(float)direction.getZ());
+		facing = Direction.RIGHT;
 		updateTranslation();
 		//System.out.println("xLoc = "+location.getX());
 	}
@@ -72,6 +77,7 @@ public class Avatar extends Model3DTriMesh
 		loc = loc.add(direction);
 		location = new Point3D(loc);
 		//this.translate((float)direction.getX(),(float)direction.getY(),(float)direction.getZ());
+		facing = Direction.LEFT;
 		updateTranslation();
 		//System.out.println("xLoc = "+location.getX());
 	}
@@ -127,5 +133,10 @@ public class Avatar extends Model3DTriMesh
 		setVertexBuffer(m.getVertexBuffer()); 
 		
 		updateLocalBound();
+	}
+
+	public Direction getFacingDir()
+	{
+		return facing;
 	}
 }

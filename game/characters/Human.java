@@ -1,5 +1,7 @@
 package game.characters;
 
+import game.projectiles.*;
+
 import sage.scene.*;
 import sage.scene.shape.*;
 import sage.model.loader.OBJLoader;
@@ -20,6 +22,7 @@ public class Human extends Avatar
 	private float X_VELOCITY = 0.01f;
 	private float Y_VELOCITY = 0;
 	private float GRAVITY = 0.5f;
+	private float FIRE_RATE = 500.0f;
 
 	private Model3DTriMesh human;
 
@@ -29,9 +32,7 @@ public class Human extends Avatar
 
 		OBJLoader loader = new OBJLoader();
 		TriMesh human = loader.loadModel("./models/man.obj");
-
 		addModel(human);
-
 	}
 
 	public Human(Point3D loc)
@@ -42,7 +43,6 @@ public class Human extends Avatar
 	public void moveRight(float time)
 	{
 		super.moveRight(X_VELOCITY, time);
-		System.out.println("Player moving right, speed = " + time);
 	}
 
 	public void moveLeft(float time)
@@ -53,6 +53,18 @@ public class Human extends Avatar
 	public void jump(float time)
 	{
 		Y_VELOCITY = 1.0f;
+	}
+
+	public Projectile fire()
+	{
+		Point3D loc = getLocation();
+		Projectile bullet = new Projectile(loc, getFacingDir());
+		return bullet;
+	}
+
+	public float getFireRate()
+	{
+		return FIRE_RATE;
 	}
 
 	public void update(float time)

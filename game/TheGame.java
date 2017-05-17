@@ -2,7 +2,8 @@ package game;
 
 import game.characters.*;
 import game.camera.*;
-import game.ai.GolemController;
+import game.ai.*;
+import game.projectiles.*;
 
 import sage.app.BaseGame;
 import sage.display.*;
@@ -38,9 +39,10 @@ public class TheGame extends BaseGame
 	Group rootNode, manModel, golemModel;
 	SkyBox skybox;
 	Avatar player1;
-	Monster golem;
+	Monster golems[];
 
 	GolemController golemController;
+	ProjectileController projectileController;
 
 	Matrix3D rotation;
 	Vector3D direction = new Vector3D(0,1,0);
@@ -51,6 +53,8 @@ public class TheGame extends BaseGame
 	private float SPEED = 0.01f;
 	private float GRAVITY = 0.5f;
 	private int NUM_ENEMIES = 5;
+
+	private Group projectiles;
 	
 	protected void initGame()
 	{
@@ -59,7 +63,6 @@ public class TheGame extends BaseGame
 		initDisplay();
 		initSkyBox();
 		initTerrain();
-		//initTerrainHeightMap();
 		initGameObjects();
 		initPlayers();
 		initMovementControls();
@@ -111,78 +114,43 @@ public class TheGame extends BaseGame
 		System.out.println("End of world = " + endOfWorld);
 	}
 
-	private void initTerrainHeightMap()
-	{
-		skybox = new SkyBox("SkyBox", 20.0f, 20.0f, 20.0f);
-		Texture background = TextureManager.loadTexture2D("./textures/background.png");
-		skybox.setTexture(SkyBox.Face.North, background);
-		//rootNode.addChild(skybox);
-		addGameWorldObject(skybox);
-
-		TerrainBlock[] terrain = new TerrainBlock[3];
-		ImageBasedHeightMap myHeightMap = new ImageBasedHeightMap("./textures/height.jpg");
-		for(int i=0; i<3; i++)
-		{
-			terrain[i] = createTerBlock(myHeightMap, i+1);
-		}
-
-		// create texture state to color terrain 
-		TextureState groundState;
-		Texture groundTexture = TextureManager.loadTexture2D("./textures/sand.bmp");
-		groundTexture.setApplyMode(Texture.ApplyMode.Replace);
-		groundState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture); // TODO - condense this?
-		groundState.setTexture(groundTexture, 0);
-		groundState.setEnabled(true);
-
-		// apply texture to the terrain
-		for(int i=0; i<3; i++)
-		{
-			terrain[i].setRenderState(groundState);
-			addGameWorldObject(terrain[i]);
-		}
-	}
-
 	private void initGameObjects()
 	{
-
-
-		golem = new Monster(new Point3D(-20,2,0), new Vector3D(1,0,0), 90);
-		//Random rand = new Random();
+		/*
+		//golem = new Monster(new Point3D(-20,2,0), new Vector3D(1,0,0), 90);
+		Random rand = new Random();
 		// Get a random spawn location
-		//int spawn_loc = rand.nextInt(Math.abs(endOfWorld)) + 20;
-		//System.out.println("Spawn location = " + -spawn_loc);
-		//golem.translate(-20,2,0);
-		//golem.rotate(90, new Vector3D(1,0,0));
+		int spawn_loc = rand.nextInt(Math.abs(endOfWorld)) + 20;
+		System.out.println("Spawn location = " + -spawn_loc);
+		golem.translate(-20,2,0);
+		golem.rotate(90, new Vector3D(1,0,0));
 		applyTexture(golem, "golem.png");
 		addGameWorldObject(golem);
 
 		golemController = new GolemController(this, golem);
+		*/
 
-
-		/*
 		// Spawn enemies
 		golems = new Monster[NUM_ENEMIES];
 		Random rand = new Random();
 		for(int i=0; i<NUM_ENEMIES; i++)
 		{
-			golems[i] = new Monster();
-			// Get a random spawn location
-			int spawn_loc = rand.nextInt(Math.abs(endOfWorld)) + 20;
+			int spawn_loc = rand.nextInt(Math.abs(endOfWorld)) + 20;	// Get a random spawn location
+			golems[i] = new Monster(new Point3D(-spawn_loc,2,0), new Vector3D(1,0,0), 90);
 			System.out.println("Spawn location = " + -spawn_loc);
-			golems[i].translate(-spawn_loc,2,0);
-			golems[i].rotate(90, new Vector3D(1,0,0));
 			applyTexture(golems[i], "golem.png");
-			golems[i].setMoving(false);
 			addGameWorldObject(golems[i]);
 
-			//golems[i].startAnimation("Walk");
+			golemController = new GolemController(this, golems[i]);
 		}
-		*/
 
 
+		// Add Group which we will use to store projectiles
+		projectiles = new Group();
+		addGameWorldObject(projectiles);
+		projectileController = new ProjectileController();
 
 		OBJLoader loader = new OBJLoader();
-
 	/*
 		Avatar man = new Human(); 
 		applyTexture(man, "./textures/man.png");
@@ -295,32 +263,16 @@ public class TheGame extends BaseGame
 	private void initMovementControls()
 	{
 		// Keyboard actions
-		//MoveAction mvForward = new MoveAction(player1, "FORWARD");
-		//MoveAction mvBackward = new MoveAction(player1, "BACKWARD");
 		MoveAction mvLeft = new MoveAction(player1, "LEFT");
 		MoveAction mvRight = new MoveAction(player1, "RIGHT");
 		MoveAction jump = new MoveAction(player1, "JUMP");
-		//MoveAction yawRight = new MoveAction(player1, "YAW_RIGHT");
-		//MoveAction yawLeft = new MoveAction(player1, "YAW_LEFT");
-		//MoveAction pitchUp = new MoveAction(player1, "PITCH_UP");
-		//MoveAction pitchDown = new MoveAction(player1, "PITCH_DOWN");
-		//MoveAction rollRight = new MoveAction(player1, "ROLL_RIGHT");
-		//MoveAction rollLeft = new MoveAction(player1, "ROLL_LEFT");
+		AttackAction fire = new AttackAction((Human)player1, this);
 
 		// Keyboard key bindings
-		//im.associateAction(kbName, Identifier.Key.W, mvForward, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		//im.associateAction(kbName, Identifier.Key.S, mvBackward, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 		im.associateAction(kbName, Identifier.Key.A, mvLeft, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 		im.associateAction(kbName, Identifier.Key.D, mvRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Identifier.Key.SPACE, fire, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
 		im.associateAction(kbName, Identifier.Key.LALT, jump, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		//im.associateAction(kbName, Identifier.Key.RIGHT, yawRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		//im.associateAction(kbName, Identifier.Key.LEFT, yawLeft, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		//im.associateAction(kbName, Identifier.Key.UP, pitchUp, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		//im.associateAction(kbName, Identifier.Key.DOWN, pitchDown, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		//im.associateAction(kbName, Identifier.Key.E, rollRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		//im.associateAction(kbName, Identifier.Key.Q, rollLeft, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		//im.associateAction(kbName, Identifier.Key.ESCAPE, quit, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-
 	}
 
 	protected void update(float elapsedTimeMS)
@@ -332,8 +284,11 @@ public class TheGame extends BaseGame
 		camController.update(elapsedTimeMS);
 
 		golemController.update(elapsedTimeMS);
-		golem.updateAnimation(elapsedTimeMS);
-		golem.update(elapsedTimeMS);
+		for(int i=0; i<NUM_ENEMIES; i++)
+		{
+			golems[i].updateAnimation(elapsedTimeMS);
+			golems[i].update(elapsedTimeMS);
+		}
 
 /*
 		for(int i=0; i<NUM_ENEMIES; i++)
@@ -470,4 +425,28 @@ public class TheGame extends BaseGame
 	{
 		return player1;
 	}
+
+	public void createProjectile(Projectile p)
+	{
+		projectiles.addChild(p);
+		p.addController(projectileController);
+		projectileController.addControlledNode(p);
+	}
+/*
+	public void checkHitDetection()
+	{
+		ArrayList<SceneNode> deleteList = new ArrayList<SceneNode>();
+		Iterator<SceneNode> itr = projectiles.getChildren();
+
+		while(itr.hasNext())
+		{
+			SceneNode p = itr.next();
+			if(p instanceof Projectile)
+			{
+				p.updateWorldBound();
+
+			}
+		}
+	}
+	*/
 }
