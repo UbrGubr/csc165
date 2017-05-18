@@ -38,7 +38,7 @@ public class TheGame extends BaseGame
 	ICamera camera;
 	Camera3Pcontroller camController;
 	IInputManager im;
-	String kbName;
+	String kbName, gpName;
 	Group rootNode, manModel, golemModel;
 	SkyBox skybox;
 	Avatar player1;
@@ -46,6 +46,7 @@ public class TheGame extends BaseGame
 	
 	//HUD Variables
 	HUDImage life1, life2, life3;
+	HUDImage gameOver;
 	HUDString health = new HUDString("HEALTH ");
 	int scoreValue = 0;
 	HUDString score = new HUDString("SCORE " + scoreValue);
@@ -71,6 +72,7 @@ public class TheGame extends BaseGame
 	protected void initGame()
 	{
 		im = getInputManager();
+		gpName = im.getFirstGamepadName();
 		kbName = im.getKeyboardName();
 		initDisplay();
 		initSkyBox();
@@ -109,7 +111,8 @@ public class TheGame extends BaseGame
 		life3.scale(0.1f,0.1f,0.1f);
 		addGameWorldObject(life3);
 		
-		
+		gameOver = new HUDImage("./gameOver.png");
+		gameOver.rotateImage(180f);
 		
 		// Set 'HEALTH' Lable
 		health.setLocation(0.03, 0.94);
@@ -330,6 +333,11 @@ public class TheGame extends BaseGame
 		im.associateAction(kbName, Identifier.Key.D, mvRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 		im.associateAction(kbName, Identifier.Key.SPACE, fire, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
 		im.associateAction(kbName, Identifier.Key.LALT, jump, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		
+		// Gamepad bindings
+		im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._4, mvLeft, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._5, mvRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._0, fire, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 	}
 
 	protected void update(float elapsedTimeMS)
@@ -352,13 +360,31 @@ public class TheGame extends BaseGame
 		setEarParameters();
 		
 		redrawHealth();
+		
+		int h = ((Human)player1).getHealth();
+		
+		// If health is 0, then game is over
+		if(h<=0)
+		{	
+			// Release audio
+			testSound.release(audioMgr);
+			testSound2.release(audioMgr);
+			resource1.unload();
+			resource2.unload();
+			audioMgr.shutdown();
+			
+			// Set 'GAME OVER' Lable
+			gameOver.setLocation(0.0,0.3);
+			gameOver.scale(0.8f,0.8f,0.8f);
+			addGameWorldObject(gameOver);	
+		}
 
 		// Close the gate over a period of about 5 seconds
 		if(gateCenterLLoc.getY() > 0)
 		{
 			Vector3D loc = new Vector3D(gateCenterLLoc);
 			Vector3D dir = new Vector3D(0,1,0);
-			dir.scale(-0.0067);
+			dir.scale(-0.097);
 			loc = loc.add(dir);
 			gateCenterLLoc = new Point3D(loc);
 			Matrix3D mat = new Matrix3D();
@@ -374,7 +400,7 @@ public class TheGame extends BaseGame
 		{
 			Vector3D loc = new Vector3D(gateCenterRLoc);
 			Vector3D dir = new Vector3D(0,1,0);
-			dir.scale(-0.0067);
+			dir.scale(-0.07);
 			loc = loc.add(dir);
 			gateCenterRLoc = new Point3D(loc);
 			Matrix3D mat = new Matrix3D();
