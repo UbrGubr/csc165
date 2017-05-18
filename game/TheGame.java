@@ -43,6 +43,12 @@ public class TheGame extends BaseGame
 	SkyBox skybox;
 	Avatar player1;
 	Monster golem;
+	
+	//HUD Variables
+	HUDImage life1, life2, life3;
+	HUDString health = new HUDString("HEALTH ");
+	int scoreValue = 0;
+	HUDString score = new HUDString("SCORE " + scoreValue);
 
 	GolemController golemController;
 	ProjectileController projectileController;
