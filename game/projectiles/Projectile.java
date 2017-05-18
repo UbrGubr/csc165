@@ -8,6 +8,8 @@ import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 import graphicslib3D.Matrix3D;
 
+import java.awt.Color;
+
 public class Projectile extends Sphere
 {
 	private float X_VELOCITY = 0.02f;
@@ -16,7 +18,7 @@ public class Projectile extends Sphere
 
 	public Projectile (Point3D loc, Direction d)
 	{
-		super();
+		super(.5,6,16,Color.YELLOW);
 		this.location = loc;
 		this.direction = d;
 		translate((float)loc.getX(), (float)loc.getY(), (float)loc.getZ());

@@ -26,6 +26,7 @@ public class Monster extends Avatar
 	private Model3DTriMesh myModel;
 
 	private boolean moving;
+	private boolean isAlive = true;
 	public boolean facingLeft;
 
 	public Monster()
@@ -134,7 +135,7 @@ public class Monster extends Avatar
 		else
 			facingLeft = true;
 
-		rotate(180, new Vector3D(0,1,0));
+		rotate(180, new Vector3D(0,0,1));
 	}
 
 	public void update(float time)
@@ -174,6 +175,15 @@ public class Monster extends Avatar
 		return HEALTH;
 	}
 	
+	public void setAlive(boolean b)
+	{
+		isAlive = b;
+	}
+
+	public boolean isAlive()
+	{
+		return isAlive;
+	}
 
 	public void updateLocation()
 	{

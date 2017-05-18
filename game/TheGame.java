@@ -42,7 +42,7 @@ public class TheGame extends BaseGame
 	Group rootNode, manModel, golemModel;
 	SkyBox skybox;
 	Avatar player1;
-	Monster golem;
+	Monster golems[];
 	
 	//HUD Variables
 	HUDImage life1, life2, life3;
@@ -50,9 +50,7 @@ public class TheGame extends BaseGame
 	int scoreValue = 0;
 	HUDString score = new HUDString("SCORE " + scoreValue);
 
-	HUDImage life1, life2, life3;
-
-	GolemController golemController;
+	GolemController golemControllers[];
 	ProjectileController projectileController;
 	
 	IAudioManager audioMgr;
@@ -60,9 +58,8 @@ public class TheGame extends BaseGame
 
 	int endOfWorld = 20;
 
-	int iteration;
-	TriMesh gateCenter;
-	Point3D gateCenterLoc;
+	TriMesh gateCenterL, gateCenterR;
+	Point3D gateCenterLLoc, gateCenterRLoc;
 
 	private float HEIGHT = 0.0f;
 	private float SPEED = 0.01f;
@@ -139,18 +136,7 @@ public class TheGame extends BaseGame
 	private void initTerrain()
 	{
 		for(int i=0; i<5; i++)
-		{
-			/*
-			if(i == 2)
-			{
-				Rectangle hazard = createHazardPanel();
-				Matrix3D hazardMat = hazard.getLocalTranslation();
-				hazardMat.translate(endOfWorld,0,0);
-				hazard.setLocalTranslation(hazardMat);
-				addGameWorldObject(hazard);
-				endOfWorld -= 10;
-			}*/
-			
+		{	
 			Rectangle ground = createGroundPanel();
 			Matrix3D groundMat = ground.getLocalTranslation();
 			groundMat.translate(endOfWorld-20,0,0);
@@ -165,36 +151,27 @@ public class TheGame extends BaseGame
 			addGameWorldObject(hazard);
 			endOfWorld -= 5;
 		}
+
 		System.out.println("End of world = " + endOfWorld);
 	}
 
 	private void initGameObjects()
 	{
-		golem = new Monster(new Point3D(-20,2,0), new Vector3D(1,0,0), 90);
-		//Random rand = new Random();
-		// Get a random spawn location
-		//int spawn_loc = rand.nextInt(Math.abs(endOfWorld)) + 20;
-		//System.out.println("Spawn location = " + -spawn_loc);
-		applyTexture(golem, "golem.png");
-		addGameWorldObject(golem);
-
-		golemController = new GolemController(this, golem);
-
-		// Spawn enemies
-		/*
 		golems = new Monster[NUM_ENEMIES];
-		Random rand = new Random();
+		golemControllers = new GolemController[NUM_ENEMIES];
+
 		for(int i=0; i<NUM_ENEMIES; i++)
 		{
-			int spawn_loc = rand.nextInt(Math.abs(endOfWorld)) + 20;	// Get a random spawn location
-			golems[i] = new Monster(new Point3D(-spawn_loc,2,0), new Vector3D(1,0,0), 90);
+			Random rand = new Random();
+			//Get a random spawn location
+			int spawn_loc = rand.nextInt(Math.abs(endOfWorld)) + 20;
 			System.out.println("Spawn location = " + -spawn_loc);
+			golems[i] = new Monster(new Point3D(-spawn_loc,2,0), new Vector3D(1,0,0), 90);
+			golems[i].rotate(180, new Vector3D(0,0,1));
 			applyTexture(golems[i], "golem.png");
 			addGameWorldObject(golems[i]);
-
-			golemController = new GolemController(this, golems[i]);
+			golemControllers[i] = new GolemController(this, golems[i]);
 		}
-		*/
 
 
 		// Add Group which we will use to store projectiles
@@ -202,58 +179,82 @@ public class TheGame extends BaseGame
 		addGameWorldObject(projectiles);
 		projectileController = new ProjectileController();
 
-		OBJLoader loader = new OBJLoader();
-	/*
-		Avatar man = new Human(); 
-		applyTexture(man, "./textures/man.png");
-		man.rotate(0,new Vector3D(0,1,0));
-		man.scale(4,4,4);
-		man.translate(-2,6,6);
-		addGameWorldObject(man);
-		
-		Avatar golem = new Monster(); 
-		applyTexture(golem, "./textures/golem.png");
-		golem.rotate(75,new Vector3D(0,1,0));
-		golem.scale(1,.75f,1);
-		golem.translate(-10,2.5f,6);
-		addGameWorldObject(golem);
-	*/		
+		OBJLoader loader = new OBJLoader();	
 
-		// Gate center
-		gateCenter = loader.loadModel("./models/gate_wood.obj");
+		// Gate center - left side
+		gateCenterL = loader.loadModel("./models/gate_wood.obj");
 		Texture woodTex = TextureManager.loadTexture2D("./textures/light_wood.png");
 		TextureState woodTexState = (TextureState)display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
 		woodTexState.setTexture(woodTex);
 		woodTexState.setEnabled(true);
-		gateCenter.setRenderState(woodTexState);
-		gateCenter.rotate(90,new Vector3D(0,1,0));
-		gateCenter.scale(1,.75f,1);
-		gateCenter.translate(10,10,0);
-		addGameWorldObject(gateCenter);
-		gateCenterLoc = new Point3D(10,10,0);
-		iteration = 0;
+		gateCenterL.setRenderState(woodTexState);
+		gateCenterL.rotate(90,new Vector3D(0,1,0));
+		gateCenterL.scale(1,.75f,1);
+		gateCenterL.translate(10,10,0);
+		addGameWorldObject(gateCenterL);
+		gateCenterLLoc = new Point3D(10,10,0);
 
 
-		// Gate pillars
-		TriMesh gateFrame = loader.loadModel("./models/gate_stone.obj");
+		// Gate center - right side
+		gateCenterR = loader.loadModel("./models/gate_wood.obj");
+		gateCenterR.setRenderState(woodTexState);
+		gateCenterR.rotate(90,new Vector3D(0,1,0));
+		gateCenterR.scale(1,.75f,1);
+		gateCenterR.translate(endOfWorld+10,10,0);
+		addGameWorldObject(gateCenterR);
+		gateCenterRLoc = new Point3D(endOfWorld+10,10,0);
+
+
+		// Gate pillars - left side
+		TriMesh gateFrameL = loader.loadModel("./models/gate_stone.obj");
 		Texture stoneTex = TextureManager.loadTexture2D("./textures/stone.jpg");
 		TextureState stoneTexState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
 		stoneTexState.setTexture(stoneTex);
 		stoneTexState.setEnabled(true);
-		gateFrame.setRenderState(stoneTexState);
-		gateFrame.rotate(90,new Vector3D(0,1,0));
-		gateFrame.scale(1,.75f,1);
-		gateFrame.translate(10,0,0);
-		addGameWorldObject(gateFrame);
+		gateFrameL.setRenderState(stoneTexState);
+		gateFrameL.rotate(90,new Vector3D(0,1,0));
+		gateFrameL.scale(1,.75f,1);
+		gateFrameL.translate(10,0,0);
+		addGameWorldObject(gateFrameL);
 
-		// Background wall
-		TriMesh wall = loader.loadModel("./models/wall_stone.obj");
-		wall.setRenderState(stoneTexState);
-		wall.rotate(90,new Vector3D(0,1,0));
-		wall.translate(-5,0,40);
-		addGameWorldObject(wall);
+		// Gate pillars - right side
+		TriMesh gateFrameR = loader.loadModel("./models/gate_stone.obj");
+		gateFrameR.setRenderState(stoneTexState);
+		gateFrameR.rotate(90,new Vector3D(0,1,0));
+		gateFrameR.scale(1,.75f,1);
+		gateFrameR.translate(endOfWorld+10,0,0);
+		addGameWorldObject(gateFrameR);
 
 
+		Texture steelTex = TextureManager.loadTexture2D("./textures/gray.png");
+		TextureState steelTexState = (TextureState) display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
+		steelTexState.setTexture(steelTex);
+		steelTexState.setEnabled(true);
+
+
+		// Create the background gate
+		int wallLoc = 10;
+		while(wallLoc > endOfWorld)
+		{
+			// Background wall
+			TriMesh wallStone = loader.loadModel("./models/wall_stone.obj");
+			wallStone.setRenderState(stoneTexState);
+			wallStone.rotate(90, new Vector3D(0,1,0));
+			wallStone.translate(wallLoc,0,40);
+			addGameWorldObject(wallStone);
+
+			// Background steel gate
+			TriMesh gateSteel = loader.loadModel("./models/gate_steel.obj");
+			gateSteel.setRenderState(steelTexState);
+			gateSteel.rotate(90, new Vector3D(0,1,0));
+			gateSteel.translate(wallLoc,2,40);
+			addGameWorldObject(gateSteel);
+
+			wallLoc -= 15;
+		}
+
+
+		// Axial lines
 		Point3D origin = new Point3D(0,0,0);
 		Point3D xEnd = new Point3D(100,0,0);
 		Point3D yEnd = new Point3D(0,100,0);
@@ -339,50 +340,47 @@ public class TheGame extends BaseGame
 		skybox.setLocalTranslation(camTranslation);
 		camController.update(elapsedTimeMS);
 
-		golemController.update(elapsedTimeMS);
+		for(int i=0; i<NUM_ENEMIES; i++)
+		{
+			golemControllers[i].update(elapsedTimeMS);
+			golems[i].updateAnimation(elapsedTimeMS);
+			golems[i].update(elapsedTimeMS);
+		}
 
-		golem.updateAnimation(elapsedTimeMS);
-		golem.update(elapsedTimeMS);
-		testSound.setLocation(new Point3D(golem.getWorldTranslation().getCol(3)));
+		testSound.setLocation(new Point3D(golems[1].getWorldTranslation().getCol(3)));
 		
 		setEarParameters();
-		
-		checkHitDetection();
 		
 		redrawHealth();
 
 		// Close the gate over a period of about 5 seconds
-		if(gateCenterLoc.getY() > 0)
+		if(gateCenterLLoc.getY() > 0)
 		{
-			Vector3D loc = new Vector3D(gateCenterLoc);
+			Vector3D loc = new Vector3D(gateCenterLLoc);
 			Vector3D dir = new Vector3D(0,1,0);
 			dir.scale(-0.0067);
 			loc = loc.add(dir);
-			gateCenterLoc = new Point3D(loc);
+			gateCenterLLoc = new Point3D(loc);
 			Matrix3D mat = new Matrix3D();
-			mat.translate(gateCenterLoc.getX(), gateCenterLoc.getY(), gateCenterLoc.getZ());
-			gateCenter.setLocalTranslation(mat);
+			mat.translate(gateCenterLLoc.getX(), gateCenterLLoc.getY(), gateCenterLLoc.getZ());
+			gateCenterL.setLocalTranslation(mat);
 		}
-
-
-/*
-		for(int i=0; i<NUM_ENEMIES; i++)
+		else
 		{
-			golems[i].updateAnimation(elapsedTimeMS);
-			golems[i].update(elapsedTimeMS);
+			checkHitDetection();
 		}
-*/
 
-/*
-		Iterator<SceneNode> itr = golemModel.getChildren();
-		while(itr.hasNext())
+		if(gateCenterRLoc.getY() > 0)
 		{
-			Model3DTriMesh submesh = (Model3DTriMesh) itr.next();
-			submesh.updateAnimation(elapsedTimeMS);
+			Vector3D loc = new Vector3D(gateCenterRLoc);
+			Vector3D dir = new Vector3D(0,1,0);
+			dir.scale(-0.0067);
+			loc = loc.add(dir);
+			gateCenterRLoc = new Point3D(loc);
+			Matrix3D mat = new Matrix3D();
+			mat.translate(gateCenterRLoc.getX(), gateCenterRLoc.getY(), gateCenterRLoc.getZ());
+			gateCenterR.setLocalTranslation(mat);
 		}
-
-		golemModel.updateGeometricState(elapsedTimeMS, true);
-*/
 
 		super.update(elapsedTimeMS);
 	}
@@ -472,10 +470,10 @@ public class TheGame extends BaseGame
 
 	public boolean checkNearbyMonsters(Monster golem)
 	{
-		if(Math.abs(player1.getLocation().getX() - golem.getLocation().getX()) <= 10)
-			return true;
-		else
-			return false;
+			if(Math.abs(player1.getLocation().getX() - golem.getLocation().getX()) <= 10)
+				return true;
+			else
+				return false;
 	}
 
 	private TerrainBlock createTerBlock(AbstractHeightMap heightMap, int blockNum)
@@ -515,7 +513,7 @@ public class TheGame extends BaseGame
 		testSound.setMaxDistance(50.0f);
 		testSound.setMinDistance(3.0f);
 		testSound.setRollOff(5.0f);
-		testSound.setLocation(new Point3D(golem.getWorldTranslation().getCol(3)));
+		testSound.setLocation(new Point3D(golems[1].getWorldTranslation().getCol(3)));
 		
 		testSound2 =  new Sound(resource2, SoundType.SOUND_MUSIC, 1, true);
 		testSound2.initialize(audioMgr);
@@ -545,7 +543,6 @@ public class TheGame extends BaseGame
 		
 	}
 	
-
 	public Avatar getPlayer()
 	{
 		return player1;
@@ -599,39 +596,52 @@ public class TheGame extends BaseGame
 		}*/
 		
 		Iterator<SceneNode>	itemList = projectiles.getChildren();
-		Iterator<SceneNode>	monList = monsters.getChildren();
+		//Iterator<SceneNode>	monList = monsters.getChildren();
 		
+		player1.updateWorldBound();
+
+		for(int i=0; i<NUM_ENEMIES; i++)
+		{
+			golems[i].updateWorldBound();
+		}
+
 		while(itemList.hasNext())
 		{
 			SceneNode item = itemList.next();
 			if(item instanceof Projectile)
 			{
-			  Point3D p1Point = new Point3D(golem.getWorldTranslation().getCol(3));
+			  //Point3D p1Point = new Point3D(golem.getWorldTranslation().getCol(3));
 			  //System.out.println(p1Point.getX() + " " + p1Point.getY() + " " + p1Point.getZ());
 			  
-			  item.updateWorldBound();
-			  
-			  // Check to see if projectile collided with a golem
-			  if(item.getWorldBound().intersects(golem.getWorldBound()))
-			  {
-				  System.out.println("hit!");
-				  itemList.remove();
+				item.updateWorldBound();
 				  
-				  ((Monster)golem).setHealth(((Monster)golem).getHealth()-1);
-				  System.out.println("hit him!");
-				  
-			  }
+				// Check to see if projectile collided with a golem
+				for(int i=0; i<NUM_ENEMIES; i++)
+				{
+				  	if((item.getWorldBound().intersects(golems[i].getWorldBound())) && golems[i].isAlive())
+				  	{
+						itemList.remove();
+					  	((Monster)golems[i]).setHealth(((Monster)golems[i]).getHealth()-1);
+					  	if(((Monster) golems[i]).getHealth() == 0)
+					  	{
+					  		golems[i].setAlive(false);
+					  		golems[i].setLocation(new Point3D(0,-20,0));	
+					  		scoreValue++;
+					  	}
+				  	}
+				}
+
 			}
 		}// end of while 
-		
-		player1.updateWorldBound();
-		golem.updateWorldBound();
-		if(player1.getWorldBound().intersects(golem.getWorldBound()))
+
+		for(int i=0; i<NUM_ENEMIES; i++)
 		{
-			System.out.println("hit you!");
-			((Human)player1).setHealth(((Human)player1).getHealth()-1);
+			if(player1.getWorldBound().intersects(golems[i].getWorldBound()))
+			{
+				System.out.println("hit you!");
+				((Human)player1).setHealth(((Human)player1).getHealth()-1);
+			}
 		}
-		
 	}
 	
 }

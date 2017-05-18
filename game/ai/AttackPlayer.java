@@ -17,8 +17,6 @@ public class AttackPlayer extends BTAction
 	@Override
 	protected BTStatus update(float elapsedTime) {
 		// TODO Auto-generated method stub
-		//rotate to face a player
-		//attack that player
 		//System.out.println("Attacking!");
 		return BTStatus.BH_SUCCESS;
 	}
