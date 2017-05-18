@@ -50,10 +50,11 @@ public class TheGame extends BaseGame
 	IAudioManager audioMgr;
 	Sound testSound, testSound2;
 
-	Matrix3D rotation;
-	Vector3D direction = new Vector3D(0,1,0);
-
 	int endOfWorld = 20;
+
+	int iteration;
+	TriMesh gateCenter;
+	Point3D gateCenterLoc;
 
 	private float HEIGHT = 0.0f;
 	private float SPEED = 0.01f;
@@ -173,7 +174,7 @@ public class TheGame extends BaseGame
 	*/		
 
 		// Gate center
-		TriMesh gateCenter = loader.loadModel("./models/gate_wood.obj");
+		gateCenter = loader.loadModel("./models/gate_wood.obj");
 		Texture woodTex = TextureManager.loadTexture2D("./textures/light_wood.png");
 		TextureState woodTexState = (TextureState)display.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
 		woodTexState.setTexture(woodTex);
@@ -181,8 +182,10 @@ public class TheGame extends BaseGame
 		gateCenter.setRenderState(woodTexState);
 		gateCenter.rotate(90,new Vector3D(0,1,0));
 		gateCenter.scale(1,.75f,1);
-		gateCenter.translate(10,0,0);
+		gateCenter.translate(10,10,0);
 		addGameWorldObject(gateCenter);
+		gateCenterLoc = new Point3D(10,10,0);
+		iteration = 0;
 
 
 		// Gate pillars
@@ -223,13 +226,15 @@ public class TheGame extends BaseGame
 	{
 		OBJLoader loader = new OBJLoader();
 
-		player1 = new Human();
+		player1 = new Human(new Point3D(0,2,0), new Vector3D(0,1,0), 90);
 		applyTexture(player1, "./textures/man.png");
-		player1.rotate(90, new Vector3D(0,1,0));
+		//player1 = new Human();
+		
+		//player1.rotate(90, new Vector3D(0,1,0));
 		player1.scale(2,2,2);
-		Matrix3D player1Mat = player1.getLocalTranslation();
-		player1Mat.translate(0,2,0);
-		player1.setLocalTranslation(player1Mat);
+		//Matrix3D player1Mat = player1.getLocalTranslation();
+		//player1Mat.translate(0,2,0);
+		//player1.setLocalTranslation(player1Mat);
 		addGameWorldObject(player1);
 
 /*
@@ -295,6 +300,20 @@ public class TheGame extends BaseGame
 		testSound.setLocation(new Point3D(golem.getWorldTranslation().getCol(3)));
 		
 		setEarParameters();
+
+		// Close the gate over a period of about 5 seconds
+		if(gateCenterLoc.getY() > 0)
+		{
+			Vector3D loc = new Vector3D(gateCenterLoc);
+			Vector3D dir = new Vector3D(0,1,0);
+			dir.scale(-0.0067);
+			loc = loc.add(dir);
+			gateCenterLoc = new Point3D(loc);
+			Matrix3D mat = new Matrix3D();
+			mat.translate(gateCenterLoc.getX(), gateCenterLoc.getY(), gateCenterLoc.getZ());
+			gateCenter.setLocalTranslation(mat);
+		}
+
 
 /*
 		for(int i=0; i<NUM_ENEMIES; i++)

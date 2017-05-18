@@ -22,6 +22,8 @@ public class NetworkingGame extends TheGame
 	private GameClient thisClient;
 	private boolean connected;
 
+	private Point3D playerPosition;
+
 	public NetworkingGame(String serverAddr, int sPort)
 	{
 		super();
@@ -52,6 +54,8 @@ public class NetworkingGame extends TheGame
 		}
 
 		super.initGame();
+
+		playerPosition = getPlayerPosition();
 	}
 
 	protected void update(float time)
@@ -59,6 +63,11 @@ public class NetworkingGame extends TheGame
 		if(thisClient != null)
 		{
 			thisClient.processPackets();
+			if(playerPosition != getPlayerPosition())
+			{
+				thisClient.sendMoveMessage(getPlayerPosition());
+				playerPosition = getPlayerPosition();
+			}
 		}
 
 		super.update(time);

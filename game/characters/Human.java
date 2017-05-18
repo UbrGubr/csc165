@@ -4,6 +4,8 @@ import game.projectiles.*;
 
 import sage.scene.*;
 import sage.scene.shape.*;
+import sage.texture.*;
+import sage.scene.state.*;
 import sage.model.loader.OBJLoader;
 import sage.model.loader.ogreXML.OgreXMLParser;
 
@@ -38,6 +40,19 @@ public class Human extends Avatar
 	public Human(Point3D loc)
 	{
 		super(loc);
+
+		OBJLoader loader = new OBJLoader();
+		TriMesh human = loader.loadModel("./models/man.obj");
+		addModel(human);
+	}
+
+	public Human(Point3D loc, Vector3D axis, float rot)
+	{
+		super(loc, rot, axis);
+
+		OBJLoader loader = new OBJLoader();
+		TriMesh human = loader.loadModel("./models/man.obj");
+		addModel(human);
 	}
 
 	public void moveRight(float time)

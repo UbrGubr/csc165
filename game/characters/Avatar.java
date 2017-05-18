@@ -45,6 +45,9 @@ public class Avatar extends Model3DTriMesh
 	public void setLocation(Point3D loc)
 	{
 		this.location = loc;
+		Matrix3D mat = new Matrix3D();
+		mat.translate(location.getX(), location.getY(), location.getZ());
+		setLocalTranslation(mat);
 	}
 
 	public Point3D getLocation()

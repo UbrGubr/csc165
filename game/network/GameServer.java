@@ -40,7 +40,7 @@ public class GameServer extends GameConnectionServer<UUID>
 
 		if(msgTokens.length > 0)
 		{
-			if(msgTokens[0].compareTo("bye")==0) // recived bye message
+			if(msgTokens[0].compareTo("bye")==0) // received bye message
 			{
 				// format bye,localid
 				UUID clientID = UUID.fromString(msgTokens[1]);

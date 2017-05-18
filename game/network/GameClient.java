@@ -30,7 +30,6 @@ public class GameClient extends GameConnectionClient
 	{
 		String message = (String) msg; 
 		String[] msgTokens = message.split(",");
-		System.out.println("Processing client packets");
 
 		if(msgTokens[0].compareTo("join")==0)
 		{
@@ -158,6 +157,22 @@ public class GameClient extends GameConnectionClient
 		}
 		catch(IOException e)
 		{
+			e.printStackTrace();
+		}
+	}
+
+	public void sendMoveMessage(Point3D pos) 
+	{
+		try 
+		{ 
+			String message = new String("move," + id.toString()); 
+			message += "," + pos.getX(); 
+			message += "," + pos.getY(); 
+			message += "," + pos.getZ(); 
+			sendPacket(message); 
+		} 
+		catch (IOException e) 
+		{ 
 			e.printStackTrace();
 		}
 	}
