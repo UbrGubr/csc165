@@ -44,6 +44,8 @@ public class TheGame extends BaseGame
 	Avatar player1;
 	Monster golem;
 
+	HUDImage life1, life2, life3;
+
 	GolemController golemController;
 	ProjectileController projectileController;
 	
