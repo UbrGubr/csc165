@@ -20,6 +20,7 @@ public class Monster extends Avatar
 	private float X_VELOCITY = 0.005f;
 	private float Y_VELOCITY = 0;
 	private float GRAVITY = 0.5f;
+	private int HEALTH = 4;
 
 	private Group model;
 	private Model3DTriMesh myModel;
@@ -162,6 +163,17 @@ public class Monster extends Avatar
 		System.out.println("Y_VELOCITY = " + Y_VELOCITY);
 		*/
 	}	
+	
+	public void setHealth(int i)
+	{
+		HEALTH = i;
+	}
+	
+	public int getHealth()
+	{
+		return HEALTH;
+	}
+	
 
 	public void updateLocation()
 	{

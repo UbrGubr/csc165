@@ -23,6 +23,7 @@ public class Human extends Avatar
 	private float Y_VELOCITY = 0;
 	private float GRAVITY = 0.5f;
 	private float FIRE_RATE = 500.0f;
+	private int HEALTH = 3;
 
 	private Model3DTriMesh human;
 
@@ -65,6 +66,16 @@ public class Human extends Avatar
 	public float getFireRate()
 	{
 		return FIRE_RATE;
+	}
+	
+	public void setHealth(int i)
+	{
+		HEALTH = i;
+	}
+	
+	public int getHealth()
+	{
+		return HEALTH;
 	}
 
 	public void update(float time)
