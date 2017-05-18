@@ -74,12 +74,50 @@ public class TheGame extends BaseGame
 		initPlayers();
 		initMovementControls();
 		initAudio();
+		initHUD();
 	}
 
 	private void initDisplay()
 	{
 		display = getDisplaySystem();
 		display.setTitle("The Game");
+	}
+	
+	private void initHUD()
+	{
+		
+		// HUD stuff
+		
+		// Set life bars
+		life1 = new HUDImage("./life.png");
+		life1.setLocation(-0.9,0.8);
+		life1.scale(0.1f,0.1f,0.1f);
+		addGameWorldObject(life1);
+		
+		life2 = new HUDImage("./life.png");
+		life2.setLocation(-0.8,0.8);
+		life2.scale(0.1f,0.1f,0.1f);
+		addGameWorldObject(life2);
+		
+		life3 = new HUDImage("./life.png");
+		life3.setLocation(-0.7,0.8);
+		life3.scale(0.1f,0.1f,0.1f);
+		addGameWorldObject(life3);
+		
+		
+		
+		// Set 'HEALTH' Lable
+		health.setLocation(0.03, 0.94);
+		health.scale(1.5f,1.5f,1.5f);
+		addGameWorldObject(health);
+		
+		// Set 'SCORE' Lable
+		score.setLocation(0.9, 0.94);
+		score.scale(1.5f,1.5f,1.5f);
+		addGameWorldObject(score);
+		
+		
+		
 	}
 
 	private void initSkyBox()
@@ -300,6 +338,10 @@ public class TheGame extends BaseGame
 		testSound.setLocation(new Point3D(golem.getWorldTranslation().getCol(3)));
 		
 		setEarParameters();
+		
+		checkHitDetection();
+		
+		redrawHealth();
 
 		// Close the gate over a period of about 5 seconds
 		if(gateCenterLoc.getY() > 0)
@@ -507,10 +549,35 @@ public class TheGame extends BaseGame
 		p.addController(projectileController);
 		projectileController.addControlledNode(p);
 	}
-/*
+	
+	public void redrawHealth()
+	{
+		int h = ((Human)player1).getHealth();
+		
+		if (h==3)
+		{
+			life1.setLocation(-0.9,0.8);
+			life2.setLocation(-0.8,0.8);
+			life3.setLocation(-0.7,0.8);
+		}else if (h==2){
+			life1.setLocation(-0.9,0.8);
+			life2.setLocation(-0.8,0.8);
+			life3.setLocation(-0.7,1.5);
+		}else if (h==1){
+			life1.setLocation(-0.9,0.8);
+			life2.setLocation(-0.8,1.5);
+			life3.setLocation(-0.7,1.5);
+		}else{
+			life1.setLocation(-0.9,1.5);
+			life2.setLocation(-0.8,1.5);
+			life3.setLocation(-0.7,1.5);
+		}
+		
+	}
+
 	public void checkHitDetection()
 	{
-		ArrayList<SceneNode> deleteList = new ArrayList<SceneNode>();
+		/*ArrayList<SceneNode> deleteList = new ArrayList<SceneNode>();
 		Iterator<SceneNode> itr = projectiles.getChildren();
 
 		while(itr.hasNext())
@@ -521,7 +588,42 @@ public class TheGame extends BaseGame
 				p.updateWorldBound();
 
 			}
+		}*/
+		
+		Iterator<SceneNode>	itemList = projectiles.getChildren();
+		Iterator<SceneNode>	monList = monsters.getChildren();
+		
+		while(itemList.hasNext())
+		{
+			SceneNode item = itemList.next();
+			if(item instanceof Projectile)
+			{
+			  Point3D p1Point = new Point3D(golem.getWorldTranslation().getCol(3));
+			  //System.out.println(p1Point.getX() + " " + p1Point.getY() + " " + p1Point.getZ());
+			  
+			  item.updateWorldBound();
+			  
+			  // Check to see if projectile collided with a golem
+			  if(item.getWorldBound().intersects(golem.getWorldBound()))
+			  {
+				  System.out.println("hit!");
+				  itemList.remove();
+				  
+				  ((Monster)golem).setHealth(((Monster)golem).getHealth()-1);
+				  System.out.println("hit him!");
+				  
+			  }
+			}
+		}// end of while 
+		
+		player1.updateWorldBound();
+		golem.updateWorldBound();
+		if(player1.getWorldBound().intersects(golem.getWorldBound()))
+		{
+			System.out.println("hit you!");
+			((Human)player1).setHealth(((Human)player1).getHealth()-1);
 		}
+		
 	}
-	*/
+	
 }
