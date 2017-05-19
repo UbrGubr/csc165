@@ -47,7 +47,7 @@ public class TheGame extends BaseGame
 	ICamera camera;
 	Camera3Pcontroller camController;
 	IInputManager im;
-	String kbName, gpName;
+	String kbName;
 	Group rootNode, manModel, golemModel;
 	SkyBox skybox;
 	Avatar player1;
@@ -90,8 +90,7 @@ public class TheGame extends BaseGame
 	{
 		eventMgr = EventManager.getInstance();
 		im = getInputManager();
-		gpName = im.getFirstGamepadName();
-		kbName = "Standard PS/2 Keyboard";
+		kbName = im.getKeyboardName();
 		initDisplay();
 		initSkyBox();
 		initTerrain();
@@ -371,13 +370,13 @@ public class TheGame extends BaseGame
 
 		// Keyboard key bindings
 		im.associateAction(kbName, Identifier.Key.A, mvLeft, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._4, mvLeft, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		
 		
 		im.associateAction(kbName, Identifier.Key.D, mvRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._5, mvRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		
 		
 		im.associateAction(kbName, Identifier.Key.SPACE, fire, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
-		im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._0, fire, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		
 		
 		im.associateAction(kbName, Identifier.Key.LALT, jump, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 	}
