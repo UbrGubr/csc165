@@ -15,7 +15,10 @@ import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 import graphicslib3D.Matrix3D;
 
-public class Monster extends Avatar
+import sage.event.*;
+
+
+public class Monster extends Avatar implements IEventListener
 {
 	private float X_VELOCITY = 0.005f;
 	private float Y_VELOCITY = 0;
@@ -184,6 +187,18 @@ public class Monster extends Avatar
 	{
 		return isAlive;
 	}
+	
+	public boolean handleEvent(IGameEvent event)
+	{
+		/*CollectEvent cevent = (CollectEvent) event;
+		int collectCount = cevent.getWhichCollect();
+		if (collectCount % 2 == 0) this.setColorBuffer(colorBuf);
+		else this.setColorBuffer(colorBuf2);
+		return true;*/
+		
+		this.scale(0.5f,0.5f,0.5f);
+		return true;
+ }
 
 	public void updateLocation()
 	{

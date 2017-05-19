@@ -16,6 +16,15 @@ import sage.terrain.*;
 import sage.texture.*;
 import sage.model.loader.OBJLoader;
 import sage.model.loader.ogreXML.OgreXMLParser;
+import sage.event.*;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.Invocable;
+import java.io.*;
+import java.util.*;
 
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
@@ -38,11 +47,16 @@ public class TheGame extends BaseGame
 	ICamera camera;
 	Camera3Pcontroller camController;
 	IInputManager im;
-	String kbName, gpName;
+	String kbName;
 	Group rootNode, manModel, golemModel;
 	SkyBox skybox;
 	Avatar player1;
 	Monster golems[];
+	
+	// Scripting variables
+	ScriptEngineManager factory = new ScriptEngineManager();
+	ScriptEngine jsEngine = factory.getEngineByName("js");
+	String scriptFileName = "createGolem.js";
 	
 	//HUD Variables
 	HUDImage life1, life2, life3;
@@ -55,6 +69,8 @@ public class TheGame extends BaseGame
 
 	GolemController golemControllers[];
 	ProjectileController projectileController;
+	
+	IEventManager eventMgr;
 	
 	IAudioManager audioMgr;
 	Sound testSound, testSound2;
@@ -73,8 +89,8 @@ public class TheGame extends BaseGame
 	
 	protected void initGame()
 	{
+		eventMgr = EventManager.getInstance();
 		im = getInputManager();
-		gpName = im.getFirstGamepadName();
 		kbName = im.getKeyboardName();
 		initDisplay();
 		initSkyBox();
@@ -167,15 +183,36 @@ public class TheGame extends BaseGame
 
 		for(int i=0; i<NUM_ENEMIES; i++)
 		{
+			executeScript();
+			
 			Random rand = new Random();
+			
 			//Get a random spawn location
 			int spawn_loc = rand.nextInt(Math.abs(endOfWorld)) + 20;
 			System.out.println("Spawn location = " + -spawn_loc);
-			golems[i] = new Monster(new Point3D(-spawn_loc,2,0), new Vector3D(1,0,0), 90);
+			//golems[i] = new Monster(new Point3D(-spawn_loc,2,0), new Vector3D(1,0,0), 90);
+			
+			//cast the engine so it supports invoking functions
+			Invocable invocableEngine = (Invocable) jsEngine;
+			
+			// invoke the script function
+			try
+			{ invocableEngine.invokeFunction("createGolems", spawn_loc); }
+			catch (ScriptException e1)
+			{ System.out.println("ScriptException in " + "createGolem" + e1); }
+			catch (NoSuchMethodException e2)
+			{ System.out.println("No such method exception in " + "createGolem" + e2); }
+			catch (NullPointerException e3)
+			{ System.out.println ("Null ptr exception reading " + "createGolem" + e3); }
+			
+			golems[i] = (Monster) jsEngine.get("golem");
+			
 			golems[i].rotate(180, new Vector3D(0,0,1));
 			applyTexture(golems[i], "golem.png");
 			addGameWorldObject(golems[i]);
 			golemControllers[i] = new GolemController(this, golems[i]);
+			
+			eventMgr.addListener(golems[i], shotEvent.class);
 		}
 
 
@@ -257,9 +294,10 @@ public class TheGame extends BaseGame
 
 			wallLoc -= 15;
 		}
-
+		
 /*
 		// Axial lines
+
 		Point3D origin = new Point3D(0,0,0);
 		Point3D xEnd = new Point3D(100,0,0);
 		Point3D yEnd = new Point3D(0,100,0);
@@ -302,14 +340,15 @@ public class TheGame extends BaseGame
 
 		// Keyboard key bindings
 		im.associateAction(kbName, Identifier.Key.A, mvLeft, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Identifier.Key.D, mvRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Identifier.Key.SPACE, fire, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
-		im.associateAction(kbName, Identifier.Key.LALT, jump, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 		
-		// Gamepad bindings
-		im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._4, mvLeft, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._5, mvRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._0, fire, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		
+		im.associateAction(kbName, Identifier.Key.D, mvRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		
+		
+		im.associateAction(kbName, Identifier.Key.SPACE, fire, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
+		
+		
+		im.associateAction(kbName, Identifier.Key.LALT, jump, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 	}
 
 	protected void update(float elapsedTimeMS)
@@ -338,12 +377,13 @@ public class TheGame extends BaseGame
 		// If health is 0, then game is over
 		if(h<=0)
 		{	
-			// Release audio
+			/*/ Release audio
 			testSound.release(audioMgr);
 			testSound2.release(audioMgr);
 			resource1.unload();
 			resource2.unload();
-			audioMgr.shutdown();
+			audioMgr.shutdown();*/
+			testSound.pause();
 			
 			// Set 'GAME OVER' Lable
 			gameOver.setLocation(0.0,0.3);
@@ -351,12 +391,12 @@ public class TheGame extends BaseGame
 			addGameWorldObject(gameOver);	
 		}
 
-		// Close the gate over a period of about 5 seconds
+		// Close the gates at beginning of game
 		if(gateCenterLLoc.getY() > 0)
 		{
 			Vector3D loc = new Vector3D(gateCenterLLoc);
 			Vector3D dir = new Vector3D(0,1,0);
-			dir.scale(-0.097);
+			dir.scale(-0.0097);
 			loc = loc.add(dir);
 			gateCenterLLoc = new Point3D(loc);
 			Matrix3D mat = new Matrix3D();
@@ -372,7 +412,7 @@ public class TheGame extends BaseGame
 		{
 			Vector3D loc = new Vector3D(gateCenterRLoc);
 			Vector3D dir = new Vector3D(0,1,0);
-			dir.scale(-0.07);
+			dir.scale(-0.0097);
 			loc = loc.add(dir);
 			gateCenterRLoc = new Point3D(loc);
 			Matrix3D mat = new Matrix3D();
@@ -492,8 +532,9 @@ public class TheGame extends BaseGame
 		return tb;
 	}
 	
-	public void initAudio(){
-		
+	public void initAudio()
+	{
+
 		audioMgr = AudioManagerFactory.createAudioManager("sage.audio.joal.JOALAudioManager");
 		
 		if(!audioMgr.initialize())
@@ -504,7 +545,7 @@ public class TheGame extends BaseGame
 		resource1 = audioMgr.createAudioResource("roar.wav", AudioResourceType.AUDIO_SAMPLE);
 		resource2 = audioMgr.createAudioResource("order.wav", AudioResourceType.AUDIO_SAMPLE);
 		
-		testSound =  new Sound(resource1, SoundType.SOUND_EFFECT, 3, true);
+		testSound =  new Sound(resource1, SoundType.SOUND_EFFECT, 3, false);
 		testSound.initialize(audioMgr);
 		testSound.setMaxDistance(50.0f);
 		testSound.setMinDistance(3.0f);
@@ -519,10 +560,6 @@ public class TheGame extends BaseGame
 		
 		
 		setEarParameters();
-		
-		
-		testSound.play();
-		testSound2.play();
 		
 	}
 	
@@ -574,22 +611,12 @@ public class TheGame extends BaseGame
 			life3.setLocation(-0.7,1.5);
 		}
 		
+		score.setText("SCORE " + scoreValue);
+		
 	}
 
 	public void checkHitDetection()
 	{
-		/*ArrayList<SceneNode> deleteList = new ArrayList<SceneNode>();
-		Iterator<SceneNode> itr = projectiles.getChildren();
-
-		while(itr.hasNext())
-		{
-			SceneNode p = itr.next();
-			if(p instanceof Projectile)
-			{
-				p.updateWorldBound();
-
-			}
-		}*/
 		
 		Iterator<SceneNode>	itemList = projectiles.getChildren();
 		//Iterator<SceneNode>	monList = monsters.getChildren();
@@ -606,8 +633,6 @@ public class TheGame extends BaseGame
 			SceneNode item = itemList.next();
 			if(item instanceof Projectile)
 			{
-			  //Point3D p1Point = new Point3D(golem.getWorldTranslation().getCol(3));
-			  //System.out.println(p1Point.getX() + " " + p1Point.getY() + " " + p1Point.getZ());
 			  
 				item.updateWorldBound();
 				  
@@ -617,6 +642,12 @@ public class TheGame extends BaseGame
 				  	if((item.getWorldBound().intersects(golems[i].getWorldBound())) && golems[i].isAlive())
 				  	{
 						itemList.remove();
+						
+						testSound.play();
+						
+						shotEvent monsterShot = new shotEvent();
+						eventMgr.triggerEvent(monsterShot);
+						
 					  	((Monster)golems[i]).setHealth(((Monster)golems[i]).getHealth()-1);
 					  	if(((Monster) golems[i]).getHealth() == 0)
 					  	{
@@ -639,5 +670,23 @@ public class TheGame extends BaseGame
 			}
 		}
 	}
+	
+	public void executeScript(){
+		try
+		{ FileReader fileReader = new FileReader(scriptFileName);
+			jsEngine.eval(fileReader); //execute the script statements in the file
+			fileReader.close();
+		}
+		catch (FileNotFoundException e1)
+		{ System.out.println(scriptFileName + " not found " + e1); }
+		catch (IOException e2)
+		{ System.out.println("IO problem with " + scriptFileName + e2); }
+		catch (ScriptException e3)
+		{ System.out.println("ScriptException in " + scriptFileName + e3); }
+		catch (NullPointerException e4)
+		{ System.out.println ("Null ptr exception in " + scriptFileName + e4); }
+	}
+	
+	
 	
 }
