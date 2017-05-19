@@ -51,6 +51,8 @@ public class TheGame extends BaseGame
 	int scoreValue = 0;
 	HUDString score = new HUDString("SCORE " + scoreValue);
 
+	AudioResource resource1, resource2;
+
 	GolemController golemControllers[];
 	ProjectileController projectileController;
 	
@@ -256,7 +258,7 @@ public class TheGame extends BaseGame
 			wallLoc -= 15;
 		}
 
-
+/*
 		// Axial lines
 		Point3D origin = new Point3D(0,0,0);
 		Point3D xEnd = new Point3D(100,0,0);
@@ -270,6 +272,7 @@ public class TheGame extends BaseGame
 		addGameWorldObject(xAxis);
 		addGameWorldObject(yAxis);
 		addGameWorldObject(zAxis);
+*/
 	}
 
 	private void initPlayers()
@@ -278,39 +281,8 @@ public class TheGame extends BaseGame
 
 		player1 = new Human(new Point3D(0,2,0), new Vector3D(0,1,0), 90);
 		applyTexture(player1, "./textures/man.png");
-		//player1 = new Human();
-		
-		//player1.rotate(90, new Vector3D(0,1,0));
 		player1.scale(2,2,2);
-		//Matrix3D player1Mat = player1.getLocalTranslation();
-		//player1Mat.translate(0,2,0);
-		//player1.setLocalTranslation(player1Mat);
 		addGameWorldObject(player1);
-
-/*
-		golemModel = getMonsterAvatar();
-		golemModel.translate(0,4,0);
-
-		Iterator<SceneNode> itr = golemModel.getChildren();
-		while(itr.hasNext())
-		{
-			Model3DTriMesh mesh = ((Model3DTriMesh)itr.next());
-			mesh.startAnimation("Walk");
-		}
-*/
-/*
-		Group model = ((Human)player1).getModel();
-
-		Iterator<SceneNode> itr = model.getChildren();
-		while (itr.hasNext())
-		{ 
-			Model3DTriMesh mesh = ((Model3DTriMesh)itr.next());
-			//mesh.startAnimation("Legs_walk");
-		}
-*/
-		//player1.startAnimation("Legs_walk");
-		//player1.startAnimation("Arms_walk");
-
 
 		// Create camera controller
 		camera = display.getRenderer().getCamera();
@@ -521,8 +493,6 @@ public class TheGame extends BaseGame
 	}
 	
 	public void initAudio(){
-		
-		AudioResource resource1, resource2;
 		
 		audioMgr = AudioManagerFactory.createAudioManager("sage.audio.joal.JOALAudioManager");
 		
